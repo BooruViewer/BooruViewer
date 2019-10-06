@@ -1,4 +1,6 @@
 using System;
+using AutoMapper;
+using BooruViewer.Models.Danbooru;
 using BooruViewer.Refit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,6 +47,8 @@ namespace BooruViewer
 
             services.AddRefitClient<IDanbooruApi>(refitSettings)
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://danbooru.donmai.us/"));
+
+            services.AddAutoMapper(typeof(DanbooruMappingProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
