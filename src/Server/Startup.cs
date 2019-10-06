@@ -47,6 +47,8 @@ namespace BooruViewer
 
             services.AddRefitClient<IDanbooruApi>(refitSettings)
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://danbooru.donmai.us/"));
+            services.AddRefitClient<ISafeDanbooruApi>(refitSettings)
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://safebooru.donmai.us/"));
 
             services.AddAutoMapper(typeof(DanbooruMappingProfile));
         }
