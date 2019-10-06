@@ -91,6 +91,12 @@ export default {
   */
   build: {
     extractCSS: process.env.NODE_ENV === 'production',
+    babel: {
+      plugins: [
+        ["@babel/plugin-proposal-decorators", { legacy: true }],
+        ["@babel/plugin-proposal-class-properties", { loose: true }],
+      ]
+    },
     /*
     ** You can extend webpack config here
     */
