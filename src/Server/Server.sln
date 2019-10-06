@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooruViewer-Server", "BooruViewer-Server.csproj", "{29B4F346-26EB-4594-A4A3-E233C21AE47B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooruViewer", "BooruViewer.csproj", "{29B4F346-26EB-4594-A4A3-E233C21AE47B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

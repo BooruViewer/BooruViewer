@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.0</TargetFramework>
-        <RootNamespace>BooruViewer_Server</RootNamespace>
+        <RootNamespace>BooruViewer</RootNamespace>
         <PublishTrimmed>true</PublishTrimmed>
         <PublishReadyToRun>true</PublishReadyToRun>
     </PropertyGroup>
