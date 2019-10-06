@@ -1,0 +1,18 @@
+
+$tagColors: (
+  artist: #f07a7b,
+  character: #46b265,
+  copyright:  #b38bec,
+  general: #51a3ec,
+  meta: #e8c259,
+);
+
+:root {
+  @each $name, $color in $tagColors {
+    $hoverColor: scale-color($color, $lightness: 30%);
+    $highlightColor: scale-color($color, $lightness: 15%);
+    --tag-color-#{$name}: #{$color};
+    --tag-color-#{$name}-hover: #{$hoverColor};
+    --tag-color-#{$name}-highlighted: #{$hoverColor};
+  }
+}
