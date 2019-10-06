@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BooruViewer.Models;
@@ -41,7 +42,7 @@ namespace BooruViewer.Controllers.Api.Danbooru
             ICollection<Post> posts;
             try
             {
-                posts = await this._api.GetPostsAsync(tags, page, limit, null);
+                posts = await this._api.GetPostsAsync(tags, page, limit, this.GetAuthenticationHeader());
             }
             catch (ApiException crap)
             {
@@ -62,6 +63,24 @@ namespace BooruViewer.Controllers.Api.Danbooru
             var postDtos = this._mapper.Map<IEnumerable<PostDto>>(posts);
             var response = new ResponseDto<PostsResponseDto>(true, new PostsResponseDto(this.SourceBooru, postDtos));
             return this.Json(response);
+        }
+
+        protected virtual String GetAuthenticationHeader()
+        {
+            if (!this.Request.Cookies.ContainsKey("danbooru"))
+                return null;
+
+            // Fail fast if it exists and doesn't decrypt
+            var danbooruCookie = this.Request.Cookies["danbooru"];
+            var authData = this.DataProtector.Unprotect(danbooruCookie);
+
+            String Base64(String data)
+            {
+                var bytes = Encoding.UTF8.GetBytes(data);
+                return Convert.ToBase64String(bytes, 0, bytes.Length);
+            }
+
+            return $"Basic {Base64(authData)}";
         }
     }
 }
