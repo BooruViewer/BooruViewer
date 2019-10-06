@@ -67,7 +67,7 @@ namespace BooruViewer.Controllers.Api.Danbooru
         }
 
         [HttpGet("autocomplete")]
-        public async Task<JsonResult> AutocompleteAsync(String tag)
+        public override async Task<JsonResult> AutocompleteAsync(String tag)
         {
             AutoComplete[] autoComplete;
             try
