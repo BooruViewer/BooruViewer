@@ -11,6 +11,7 @@ using BooruViewer.Models.Response.AutoComplete;
 using BooruViewer.Models.Response.Posts;
 using BooruViewer.Refit;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Refit;
 
@@ -94,6 +95,23 @@ namespace BooruViewer.Controllers.Api.Danbooru
             return this.Json(response);
         }
 
+        [HttpGet("auth")]
+        public override Task<JsonResult> Authenticate(String username, String password)
+        {
+            // TODO: Test Username + Password to ensure they work.
+            // Waiting on /profile and /settings endpoints, https://discordapp.com/channels/310432830138089472/310846683376517121/617772741000429704
+            var expiration = DateTimeOffset.UtcNow.AddDays(7);
+            this.Response.Cookies.Append("danbooru", this.DataProtector.Protect($"{username}:{password}"),
+                new CookieOptions()
+                {
+                    Expires = expiration,
+                    HttpOnly = true,
+                    IsEssential = true,
+                    Path = "/",
+                });
+
+            return Task.FromResult(this.Json(new ResponseDto<Int64>(true, expiration.ToUnixTimeSeconds())));
+        }
         [HttpGet("image/{parts}")]
         public override async Task<FileResult> ImageAsync(String parts)
         {
