@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using BooruViewer.Models.Response;
+using BooruViewer.Models.Response.AutoComplete;
 using BooruViewer.Models.Response.Posts;
 
 namespace BooruViewer.Models.Danbooru
@@ -39,6 +40,12 @@ namespace BooruViewer.Models.Danbooru
                 .ForMember(dto => dto.Uploader,
                     opts => opts.MapFrom(src =>
                         new UploaderDto(src.UploaderName, $"https://danbooru.donmai.us/users/{src.UploaderId}")));
+
+            this.CreateMap<AutoComplete, AutoCompleteDto>()
+                .ForMember(dto => dto.Count,
+                    opts => opts.MapFrom(src => src.PostCount))
+                .ForMember(dto => dto.Type,
+                    opts => opts.ConvertUsing(new TagTypeToTagTypesValueConverter(), src => src.Type));
         }
 
         private class SourceDtoFromPostValueConverter : IValueConverter<Post, SourceDto>
@@ -130,6 +137,12 @@ namespace BooruViewer.Models.Danbooru
                 var ids = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 return ids.Length > 0 ? ids.Select(id => UInt64.Parse(id)).ToList() : new List<UInt64>();
             }
+        }
+
+        private class TagTypeToTagTypesValueConverter : IValueConverter<TagType, TagTypes>
+        {
+            public TagTypes Convert(TagType type, ResolutionContext context)
+                => Enum.Parse<TagTypes>(type.ToString(), true);
         }
     }
 }

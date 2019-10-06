@@ -6,6 +6,7 @@ using AutoMapper;
 using BooruViewer.Models;
 using BooruViewer.Models.Danbooru;
 using BooruViewer.Models.Response;
+using BooruViewer.Models.Response.AutoComplete;
 using BooruViewer.Models.Response.Posts;
 using BooruViewer.Refit;
 using Microsoft.AspNetCore.DataProtection;
@@ -62,6 +63,33 @@ namespace BooruViewer.Controllers.Api.Danbooru
 
             var postDtos = this._mapper.Map<IEnumerable<PostDto>>(posts);
             var response = new ResponseDto<PostsResponseDto>(true, new PostsResponseDto(this.SourceBooru, postDtos));
+            return this.Json(response);
+        }
+
+        [HttpGet("autocomplete")]
+        public async Task<JsonResult> AutocompleteAsync(String tag)
+        {
+            AutoComplete[] autoComplete;
+            try
+            {
+                autoComplete = await this._api.GetAutocompleteAsync(tag, limit: 7, authorization: this.GetAuthenticationHeader());
+            }
+            catch (ApiException crap)
+            {
+                if (!crap.HasContent)
+                    throw;
+
+                var error = await crap.GetContentAsAsync<Request>();
+
+                return this.Json(new ResponseDto<ResponseErrorMessage>(false,
+                    new ResponseErrorMessage(
+                        $"Proxy request to danbooru failed.{Environment.NewLine}" +
+                        $"Reason: {error.Message}{Environment.NewLine}" +
+                        $"Stacktrace: {String.Join(Environment.NewLine, error.Backtrace)}")));
+            }
+
+            var response = new ResponseDto<IEnumerable<AutoCompleteDto>>(true,
+                this._mapper.Map<IEnumerable<AutoCompleteDto>>(autoComplete));
             return this.Json(response);
         }
 
