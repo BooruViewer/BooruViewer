@@ -26,6 +26,7 @@ namespace BooruViewer
         {
             services.AddControllers()
                 .AddNewtonsoftJson(o => o.SerializerSettings.Converters.Add(new StringEnumConverter()));
+            services.AddDataProtection();
 
             var refitSettings = new RefitSettings
             {
