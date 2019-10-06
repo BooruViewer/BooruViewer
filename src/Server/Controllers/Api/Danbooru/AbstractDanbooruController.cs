@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -91,6 +92,20 @@ namespace BooruViewer.Controllers.Api.Danbooru
             var response = new ResponseDto<IEnumerable<AutoCompleteDto>>(true,
                 this._mapper.Map<IEnumerable<AutoCompleteDto>>(autoComplete));
             return this.Json(response);
+        }
+
+        [HttpGet("image/{parts}")]
+        public override async Task<FileResult> ImageAsync(String parts)
+        {
+            var splitParts = parts.Split(':');
+            var domain = splitParts[0];
+            var path = String.Join('/', splitParts.Skip(1));
+
+            // :(
+            var tmpClient = RestService.For<IDanbooruApi>($"https://{domain}.donmai.us/");
+            var response = await tmpClient.GetImageAsync(path);
+
+            return this.File(await response.ReadAsStreamAsync(), response.Headers.ContentType.MediaType);
         }
 
         protected virtual String GetAuthenticationHeader()
