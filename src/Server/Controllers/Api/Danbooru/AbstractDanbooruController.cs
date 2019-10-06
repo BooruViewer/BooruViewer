@@ -112,6 +112,47 @@ namespace BooruViewer.Controllers.Api.Danbooru
 
             return Task.FromResult(this.Json(new ResponseDto<Int64>(true, expiration.ToUnixTimeSeconds())));
         }
+
+        [HttpGet("favorites/add/{postId}")]
+        public async Task<JsonResult> AddFavorite(UInt64 postId)
+        {
+            try
+            {
+                var post = await this._api.AddFavorite(postId, this.GetAuthenticationHeader());
+                return this.Json(new ResponseDto<Object>(true, null));
+            }
+            catch (ApiException crap)
+            {
+                if (!crap.HasContent)
+                    throw;
+
+                var error = await crap.GetContentAsAsync<Request>();
+                if (error.Message == "You have already favorited this post")
+                    return this.Json(new ResponseDto<Object>(true, null));
+
+                return this.Json(new ResponseDto<ResponseErrorMessage>(false, new ResponseErrorMessage(
+                    $"Proxy request to danbooru failed.{Environment.NewLine}" +
+                    $"Reason: {error.Message}{Environment.NewLine}" +
+                    $"Stacktrace: {String.Join(Environment.NewLine, error.Backtrace)}")));
+            }
+        }
+
+        [HttpGet("favorites/remove/{postId}")]
+        public async Task<JsonResult> RemoveFavorite(UInt64 postId)
+        {
+            try
+            {
+                await this._api.RemoveFavorite(postId, this.GetAuthenticationHeader());
+                return this.Json(new ResponseDto<Object>(true, null));
+            }
+            catch (ApiException)
+            {
+                return this.Json(new ResponseDto<ResponseErrorMessage>(false, new ResponseErrorMessage(
+                    $"Proxy request to danbooru failed.{Environment.NewLine}" +
+                    $"Reason: Unexpected ApiException Occured.")));
+            }
+        }
+
         [HttpGet("image/{parts}")]
         public override async Task<FileResult> ImageAsync(String parts)
         {
