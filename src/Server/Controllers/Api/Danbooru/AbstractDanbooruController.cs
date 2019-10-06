@@ -24,6 +24,8 @@ namespace BooruViewer.Controllers.Api.Danbooru
 
         protected readonly IDataProtector DataProtector;
         protected abstract SourceBooru SourceBooru { get; }
+        protected abstract String CookieName { get;  }
+        protected abstract String BaseDomain { get; }
 
         protected AbstractDanbooruController(IDanbooruApi api, IMapper mapper, IDataProtectionProvider dataProtectorProvider)
         {
@@ -101,7 +103,7 @@ namespace BooruViewer.Controllers.Api.Danbooru
             // TODO: Test Username + Password to ensure they work.
             // Waiting on /profile and /settings endpoints, https://discordapp.com/channels/310432830138089472/310846683376517121/617772741000429704
             var expiration = DateTimeOffset.UtcNow.AddDays(7);
-            this.Response.Cookies.Append("danbooru", this.DataProtector.Protect($"{username}:{password}"),
+            this.Response.Cookies.Append(this.CookieName, this.DataProtector.Protect($"{username}:{password}"),
                 new CookieOptions()
                 {
                     Expires = expiration,
@@ -161,7 +163,7 @@ namespace BooruViewer.Controllers.Api.Danbooru
             var path = String.Join('/', splitParts.Skip(1));
 
             // :(
-            var tmpClient = RestService.For<IDanbooruApi>($"https://{domain}.donmai.us/");
+            var tmpClient = RestService.For<IDanbooruApi>($"https://{domain}.{this.BaseDomain}/");
             var response = await tmpClient.GetImageAsync(path);
 
             return this.File(await response.ReadAsStreamAsync(), response.Headers.ContentType.MediaType);
@@ -169,11 +171,11 @@ namespace BooruViewer.Controllers.Api.Danbooru
 
         protected virtual String GetAuthenticationHeader()
         {
-            if (!this.Request.Cookies.ContainsKey("danbooru"))
+            if (!this.Request.Cookies.ContainsKey(this.CookieName))
                 return null;
 
             // Fail fast if it exists and doesn't decrypt
-            var danbooruCookie = this.Request.Cookies["danbooru"];
+            var danbooruCookie = this.Request.Cookies[this.CookieName];
             var authData = this.DataProtector.Unprotect(danbooruCookie);
 
             String Base64(String data)
