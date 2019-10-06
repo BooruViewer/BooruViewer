@@ -14,7 +14,9 @@ namespace BooruViewer_Server
             var env = host.Services.GetService<IWebHostEnvironment>();
             if (!env.IsDevelopment())
             {
-                Process.Start("http://localhost:5000");
+                var startSettings = new ProcessStartInfo("http://localhost:5000")
+                    {UseShellExecute = true,};
+                Process.Start(startSettings);
             }
 
             host.Run();
