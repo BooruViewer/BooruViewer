@@ -1,9 +1,14 @@
+using System;
+using BooruViewer.Refit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
+using Refit;
 
 namespace BooruViewer
 {
@@ -21,7 +26,24 @@ namespace BooruViewer
         {
             services.AddControllers()
                 .AddNewtonsoftJson(o => o.SerializerSettings.Converters.Add(new StringEnumConverter()));
-            services.AddControllers();
+
+            var refitSettings = new RefitSettings
+            {
+                ContentSerializer = new JsonContentSerializer(new JsonSerializerSettings
+                {
+                    ContractResolver = new DefaultContractResolver
+                    {
+                        NamingStrategy = new SnakeCaseNamingStrategy(),
+                    },
+                    Converters =
+                    {
+                        new StringEnumConverter()
+                    }
+                })
+            };
+
+            services.AddRefitClient<IDanbooruApi>(refitSettings)
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://danbooru.donmai.us/"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
