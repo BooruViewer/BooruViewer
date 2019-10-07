@@ -65,3 +65,22 @@
     },
   }
 </script>
+
+<style lang="scss">
+  // Removes the horrible default scrolbar to the right
+  // This needs to be done because of the unusual css reset vuetify users
+  html {
+    overflow-y: initial;
+  }
+
+  // Fixes the weird as bug because... reasons?
+  .os-host {
+    height: 100%;
+  }
+
+  // We want the content to extend the full width
+  // This is a quick and dirty hack, i'm sure there is a proper way in vuetify.
+  .container {
+    max-width: 100% !important;
+  }
+</style>

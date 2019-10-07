@@ -38,7 +38,8 @@ export default {
   ** Global CSS
   */
   css: [
-    "~/assets/global.scss"
+    "overlayscrollbars/css/OverlayScrollbars.css",
+    "~/assets/global.scss",
   ],
   /*
   ** Plugins to load before mounting the App
