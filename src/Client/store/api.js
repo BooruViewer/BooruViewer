@@ -44,6 +44,6 @@ export const actions = {
     }
 
     console.log(`[VueX/api] Initializing Booru Api with endpoint ${state.currentEndpoint}`)
-    commit('changeEndpoint', { endpoint: state.currentEndpoint });
+    commit(api.Mutations.ChangeEndpoint, { endpoint: state.currentEndpoint });
   }
 }

@@ -53,10 +53,10 @@ export const mutations = {
 }
 
 export const actions = {
-  [ui.actins.OpenDialog]({ commit }, { dialog }) {
-    commit(MUTATIONS.DialogVisibility, ({ dialog, visible: true }))
+  [ui.actions.OpenDialog]({ commit }, { dialog }) {
+    commit(ui.mutations.DialogVisibility, ({ dialog, visible: true }))
   },
-  [ui.actins.ToggleDrawer]({ commit, state }) {
-    commit(MUTATIONS.DrawerOpen, { open: !state.drawerOpen })
+  [ui.actions.ToggleDrawer]({ commit, state }) {
+    commit(ui.mutations.DrawerOpen, { open: !state.drawerOpen })
   },
 }

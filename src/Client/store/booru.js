@@ -1,3 +1,4 @@
+import { api } from "~/store/api"
 
 const options = {
   hidePostsWhileLoading: true,
@@ -49,10 +50,10 @@ export const actions = {
     const { state, commit, rootGetters, rootState, dispatch } = context
 
     if (options.hidePostsWhileLoading)
-      commit('setPosts', [])
+      commit(booru.mutations.Posts, [])
 
-    dispatch('api/init', null, { root: true })
-    const api = rootGetters['api/instance']
+    dispatch('api/' + api.actions.Initialize, null, { root: true })
+    const api = rootGetters['api/' + api.getters.Instance]
 
     // await dispatch('auth/ensureAuth', null, { root: true })
 
@@ -62,14 +63,14 @@ export const actions = {
 
     const res = await api.getPosts(tags, rootState.route.params.page, state.limit)
     if (res.isSuccess) {
-      commit('setSourceBooru', res.data.sourceBooru)
-      commit('setPosts', res.data.posts)
+      commit(booru.mutations.SourceBooru, res.data.sourceBooru)
+      commit(booru.mutations.Posts, res.data.posts)
     } else {
       throw new Error(res.error.message)
     }
   },
   async [booru.actions.RefreshPosts]({ dispatch }) {
-    dispatch('fetchPosts')
+    dispatch(booru.actions.FetchPosts)
   },
 }
 
