@@ -4,7 +4,7 @@
   import { booru } from "~/store/booru"
   import TagsPresenter from "~/components/TagsPresenter"
 
-  const Booru = namespace("nbooru")
+  const Booru = namespace("booru")
   const Route = namespace("route")
 
   @Component({
