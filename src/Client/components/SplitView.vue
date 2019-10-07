@@ -25,6 +25,8 @@
       if (!(resizer.className && resizer.className.match('dragger')))
         return;
 
+      e.preventDefault()
+
       const container = this.$el;
       const leftPane = resizer.previousElementSibling
       const rightPane = resizer.nextElementSibling
@@ -73,6 +75,8 @@
       if (!(resizer.className && resizer.className.match('dragger')))
         return;
 
+      e.preventDefault()
+
       const container = this.$el;
       const leftPane = resizer.previousElementSibling
       const rightPane = resizer.nextElementSibling
@@ -118,12 +122,10 @@
 
     render(h) {
       const defaultSlot = this.$slots.default ||
-          <div className="dragger" ref="resizeEl" onDblclick={this.onDoubleClick} onMouseDown={this.onMouseDown}
+          <div class="dragger" ref="resizeEl" onDblclick={this.onDoubleClick} onMouseDown={this.onMouseDown}
                onTouchStart={this.onTouchStart}>
             <v-divider vertical/>
           </div>
-
-      const alert = (e) => alert(e.type || "no type!")
 
       return <div class="split-view-container">
         {this.$slots['left-content']}
