@@ -20,7 +20,8 @@
     "nuxt-vuex-router-sync": "^0.0.3",
     "overlayscrollbars": "^1.9.1",
     "overlayscrollbars-vue": "^0.1.0",
-    "qs": "^6.9.0"
+    "qs": "^6.9.0",
+    "vuex-persistedstate": "^2.5.4"
   },
   "devDependencies": {
     "@nuxtjs/vuetify": "^1.0.0"
