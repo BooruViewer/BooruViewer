@@ -25,8 +25,9 @@
     },
     methods: {
       stop(callback) {
-        return ({ stopPropagation }) => {
-          stopPropagation()
+        return (e) => {
+          if (e.stopPropagation)
+            e.stopPropagation()
           callback()
         }
       }
