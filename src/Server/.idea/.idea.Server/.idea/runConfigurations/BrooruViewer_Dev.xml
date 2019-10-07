@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="BrooruViewer Dev" type="CompoundRunConfigurationType">
+    <toRun name="BooruViewer Watch [Dotnet]" type="RunNativeExe" />
+    <toRun name="BooruViewer Dev [Yarn]" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>
