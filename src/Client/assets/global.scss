@@ -15,6 +15,8 @@ $tagColors: (
     --tag-color-#{$name}-hover: #{$hoverColor};
     --tag-color-#{$name}-highlighted: #{$hoverColor};
   }
+
+  --thumbnail-image-size: 164px;
 }
 
 

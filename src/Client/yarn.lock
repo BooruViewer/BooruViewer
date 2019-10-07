@@ -4143,6 +4143,13 @@ locate-path@^5.0.0:
   dependencies:
     p-locate "^4.1.0"
 
+lodash-decorators@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/lodash-decorators/-/lodash-decorators-6.0.1.tgz#f5347811ee7792eba4719042354541578142273d"
+  integrity sha512-1M0YC8G3nFTkejZEk2ehyvryEdcqj6xATH+ybI8j53cLs/bKRsavaE//y7nz/A0vxEFhxYqev7vdWfsuTJ1AtQ==
+  dependencies:
+    tslib "^1.9.2"
+
 lodash._reinterpolate@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz#0ccf2d89166af03b3663c796538b75ac6e114d9d"
@@ -4718,6 +4725,13 @@ nuxt-property-decorator@^2.4.0:
     vuex "^3.1.1"
     vuex-class "^0.3.2"
 
+nuxt-vuex-router-sync@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/nuxt-vuex-router-sync/-/nuxt-vuex-router-sync-0.0.3.tgz#fa7cd6b967dbab7e9efccd1ac2dfca4335ec1ad4"
+  integrity sha512-mCnQEdu7s5+qxBzTZapSAw4tiustmbkb3WZlF5+RaN6wkRy/CMqrNhlcbhsJ8KsUiUZy4Ca2OcxDzZdYvQE24Q==
+  dependencies:
+    vuex-router-sync "^5.0.0"
+
 nuxt@^2.0.0:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/nuxt/-/nuxt-2.10.0.tgz#854c21e87c8b237359253b9419f05149b6214b63"
@@ -4858,6 +4872,16 @@ osenv@^0.1.4:
   dependencies:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.0"
+
+overlayscrollbars-vue@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/overlayscrollbars-vue/-/overlayscrollbars-vue-0.1.0.tgz#0ec91dabdacb0a453100ffd1704b11d736dc2c83"
+  integrity sha512-o86pCSX07N95UbKXv0cCVytiaMVoCM/sWLnoWGYEdGjmuYJOZfz/PXrNaLPEOGx4D60RTUCZkhL2Q6YdCPVRww==
+
+overlayscrollbars@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/overlayscrollbars/-/overlayscrollbars-1.9.1.tgz#46f5f275e3966b11dbf147f6c441e777c313af76"
+  integrity sha512-MKOIiIaxfvemDQu1o03M/4lSs8EsSEqtaKMfspTtgF6bzxh8+ymzDtMCDGRIy4BQBQlu1ThP1QuSCdM9VAO1Qw==
 
 p-finally@^2.0.0:
   version "2.0.1"
@@ -6808,7 +6832,7 @@ tryer@^1.0.1:
   resolved "https://registry.yarnpkg.com/tryer/-/tryer-1.0.1.tgz#f2c85406800b9b0f74c9f7465b81eaad241252f8"
   integrity sha512-c3zayb8/kWWpycWYg87P71E1S1ZL6b6IJxfb5fvsUgsf0S2MVGaDhDXXjDMpdCpfWXqptc+4mXwmiy1ypXqRAA==
 
-tslib@^1.9.0:
+tslib@^1.9.0, tslib@^1.9.2:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
   integrity sha512-qOebF53frne81cf0S9B41ByenJ3/IuH8yJKngAX35CmiZySA0khhkovshKK+jGCaMnVomla7gVlIcc3EvKPbTQ==
@@ -7149,6 +7173,11 @@ vuex-class@^0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/vuex-class/-/vuex-class-0.3.2.tgz#c7e96a076c1682137d4d23a8dcfdc63f220e17a8"
   integrity sha512-m0w7/FMsNcwJgunJeM+wcNaHzK2KX1K1rw2WUQf7Q16ndXHo7pflRyOV/E8795JO/7fstyjH3EgqBI4h4n4qXQ==
+
+vuex-router-sync@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/vuex-router-sync/-/vuex-router-sync-5.0.0.tgz#1a225c17a1dd9e2f74af0a1b2c62072e9492b305"
+  integrity sha512-Mry2sO4kiAG64714X1CFpTA/shUH1DmkZ26DFDtwoM/yyx6OtMrc+MxrU+7vvbNLO9LSpgwkiJ8W+rlmRtsM+w==
 
 vuex@^3.1.1:
   version "3.1.1"
