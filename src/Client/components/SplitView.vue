@@ -122,8 +122,8 @@
 
     render(h) {
       const defaultSlot = this.$slots.default ||
-          <div class="dragger" ref="resizeEl" onDblclick={this.onDoubleClick} onMouseDown={this.onMouseDown}
-               onTouchStart={this.onTouchStart}>
+          <div class="dragger" ref="resizeEl" onDblclick={this.onDoubleClick} onMousedown={this.onMouseDown}
+               onTouchstart={this.onTouchStart}>
             <v-divider vertical/>
           </div>
 
