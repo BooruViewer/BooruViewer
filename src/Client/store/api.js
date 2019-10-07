@@ -17,6 +17,7 @@ export const api = {
 export const state = () => ({
   booru: null,
   currentEndpoint: "Safe Danbooru",
+  blacklist: ["booru"],
 })
 
 export const getters = {
@@ -44,6 +45,6 @@ export const actions = {
     }
 
     console.log(`[VueX/api] Initializing Booru Api with endpoint ${state.currentEndpoint}`)
-    commit(api.Mutations.ChangeEndpoint, { endpoint: state.currentEndpoint });
+    commit(api.mutations.ChangeEndpoint, { endpoint: state.currentEndpoint });
   }
 }
