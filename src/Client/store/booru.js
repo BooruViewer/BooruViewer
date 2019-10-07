@@ -1,4 +1,4 @@
-import { api } from "~/store/api"
+import { api as apis } from "~/store/api"
 
 const options = {
   hidePostsWhileLoading: true,
@@ -25,12 +25,13 @@ export const state = () => ({
   posts: [],
   limit: 100,
   sourceBooru: null,
-  autocompleteResults: [],
+  blacklist: ["*"],
 })
 
 export const getters = {
   [booru.getters.Posts]: s => s.posts,
   [booru.getters.Limit]: s => s.limit,
+  [booru.getters.SourceBooru]: s => s.sourceBooru,
 }
 
 export const mutations = {
@@ -52,8 +53,8 @@ export const actions = {
     if (options.hidePostsWhileLoading)
       commit(booru.mutations.Posts, [])
 
-    dispatch('api/' + api.actions.Initialize, null, { root: true })
-    const api = rootGetters['api/' + api.getters.Instance]
+    dispatch('api/' + apis.actions.Initialize, null, { root: true })
+    const api = rootGetters['api/' + apis.getters.Instance]
 
     // await dispatch('auth/ensureAuth', null, { root: true })
 
