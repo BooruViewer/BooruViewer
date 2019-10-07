@@ -2,11 +2,12 @@
   import { Component, Vue } from "nuxt-property-decorator"
   import SplitView from "~/components/SplitView"
   import PostsPresenter from "~/components/Presenters/PostsPresenter"
+  import PreviewPresenter from "~/components/Presenters/PreviewPresenter"
 
 
   @Component({
     components: {
-      SplitView, PostsPresenter
+      SplitView, PostsPresenter, PreviewPresenter
     },
   })
   export default class Index extends Vue {
@@ -31,7 +32,7 @@
           </template>
           <template slot="right-content">
             <div class="pane" style={{ 'min-width': '20vw' }}>
-
+              <preview-presenter image={this.image} />
             </div>
           </template>
         </split-view>

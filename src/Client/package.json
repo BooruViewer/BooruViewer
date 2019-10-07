@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
+    "file-saver": "^2.0.2",
     "lodash": "^4.17.15",
     "lodash-decorators": "^6.0.1",
     "nuxt": "^2.0.0",
