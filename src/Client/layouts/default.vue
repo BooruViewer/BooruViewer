@@ -23,6 +23,14 @@
         title: 'Vuetify.js',
       }
     },
+    methods: {
+      stop(callback) {
+        return ({ stopPropagation }) => {
+          stopPropagation()
+          callback()
+        }
+      }
+    },
     render: function (h) {
       const navItems = this.items.map(item => {
         return <v-list-item to={item.to} router="" exact="">
@@ -40,11 +48,11 @@
           </v-list>
         </v-navigation-drawer>
         <v-app-bar clipped-left fixed="" app>
-          <v-app-bar-nav-icon onClick={m.stop(() => this.drawer = !this.drawer)}/>
-          <v-btn icon onClick={m.stop(() => this.miniVariant = !this.miniVariant)}>
+          <v-app-bar-nav-icon onClick={this.stop(() => this.drawer = !this.drawer)}/>
+          <v-btn icon onClick={this.stop(() => this.miniVariant = !this.miniVariant)}>
             <v-icon>mdi-{`chevron-${this.miniVariant ? 'right' : 'left'}`}</v-icon>
           </v-btn>
-          <v-btn icon onClick={m.stop(() => this.clipped = !this.clipped)}>
+          <v-btn icon onClick={this.stop(() => this.clipped = !this.clipped)}>
             <v-icon>mdi-application</v-icon>
           </v-btn>
         </v-app-bar>
