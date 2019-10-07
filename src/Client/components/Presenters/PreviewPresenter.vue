@@ -1,7 +1,7 @@
 <script>
   import { Component, Prop, Watch, namespace, Vue } from "nuxt-property-decorator"
   import saveAs from "file-saver"
-  import TagsPresenter from "~/components/TagsPresenter"
+  import TagsPresenter from "~/components/Presenters/TagsPresenter"
   import { booru } from "~/store/booru"
   import { api } from "~/store/api"
 

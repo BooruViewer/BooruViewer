@@ -2,7 +2,7 @@
   import { Component, Watch, namespace, Vue } from "nuxt-property-decorator"
   import { Debounce } from "lodash-decorators"
   import { booru } from "~/store/booru"
-  import TagsPresenter from "~/components/TagsPresenter"
+  import TagsPresenter from "~/components/Presenters/TagsPresenter"
 
   const Booru = namespace("booru")
   const Route = namespace("route")
