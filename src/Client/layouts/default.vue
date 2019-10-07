@@ -26,11 +26,10 @@
     methods: {
       stop(callback) {
         return (e) => {
-          if (e.stopPropagation)
-            e.stopPropagation()
+          e.stopPropagation()
           callback()
         }
-      }
+      },
     },
     render: function (h) {
       const navItems = this.items.map(item => {
