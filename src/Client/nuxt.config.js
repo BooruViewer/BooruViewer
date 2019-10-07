@@ -53,6 +53,7 @@ export default {
   */
   buildModules: [
     '@nuxtjs/vuetify',
+    '@nuxtjs/moment',
   ],
   /*
   ** Nuxt.js modules
