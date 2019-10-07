@@ -76,7 +76,7 @@
     onImageLoaded(e) {
       console.log(`[PreviewPresenter] Finished loading image.`)
       // Ensure that we are still the same post!
-      if (this.image && this.currentPostId !== this.image.id)
+      if (!!this.image && this.currentPostId !== this.image.id)
         return
 
       console.log(`[PreviewPresenter] Setting image with id of ${this.image.id}`)
