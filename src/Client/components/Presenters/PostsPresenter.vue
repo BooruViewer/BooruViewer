@@ -100,6 +100,10 @@
           })
     }
 
+    created() {
+      this.getPosts()
+    }
+
     render() {
 
       const posts = this.VisiblePosts.map((post, idx) => {
