@@ -1,0 +1,2 @@
+
+assembly-informational-format: '{MajorMinorPatch}+{CommitsSinceVersionSource}/{BranchName}+{ShortSha}'

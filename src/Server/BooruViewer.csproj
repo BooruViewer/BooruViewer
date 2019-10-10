@@ -11,6 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="GitVersionTask" Version="5.0.2-beta1.90" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
       <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.0.0" />
       <PackageReference Include="Refit.HttpClientFactory" Version="4.7.51" />
