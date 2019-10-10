@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="BooruViewer Dev [Yarn]" type="js.build_tools.npm">
-    <package-json value="$PROJECT_DIR$/../Client/package.json" />
+    <package-json value="$PROJECT_DIR$/Client/package.json" />
     <command value="run" />
     <scripts>
       <script value="dev" />
