@@ -152,7 +152,7 @@
 
         let hrefSrc, textSrc
         if (this.image.source) {
-          hrefSrc = <span><a href-={this.image.source.href}>{this.image.source.friendlyName}</a></span>
+          hrefSrc = <span><a href={this.image.source.href}>{this.image.source.friendlyName}</a></span>
           textSrc = <span>{this.image.source.friendlyName}</span>
         }
         const naSrc = <span>N/A</span>
