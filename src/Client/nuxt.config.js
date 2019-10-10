@@ -76,6 +76,9 @@ export default {
   */
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
+    // This breaks production builds because default is false for dev, true for  production
+    // To use this with "true", would require manually importing all vuetify components.
+    treeShake: false,
     theme: {
       dark: true,
       themes: {
