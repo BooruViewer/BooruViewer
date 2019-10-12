@@ -12,7 +12,7 @@
 
     @Route.State(s => s.params.tags)
     Tags
-    @Route.State(s => s.params.Page)
+    @Route.State(s => s.params.page)
     Page
 
     @Api.Getter(api.getters.AllEndpoints)

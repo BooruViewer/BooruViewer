@@ -1,10 +1,13 @@
 <script>
   import { Component, namespace, Vue } from "nuxt-property-decorator"
+  import BooruSwitcherPart from "~/components/Parts/BooruSwitcherPart"
   import { ui } from "~/store/ui"
 
   const Ui = namespace("ui")
 
-  @Component
+  @Component({
+    components: { BooruSwitcherPart }
+  })
   export default class NavigationPart extends Vue {
 
     @Ui.Getter(ui.getters.DrawerOpen)
@@ -39,6 +42,12 @@
         this.$refs.booruSelector.close()
     }
 
+    openQuickSelector() {
+      this.drawerMini = false
+      if (this.$refs.booruSelector)
+        this.$refs.booruSelector.open()
+    }
+
     onDebug() {
       this.$store.dispatch("booru/refreshPosts")
     }
@@ -64,10 +73,10 @@
 
         <v-divider/>
 
-        <v-list-item>
+        <v-list-item onClick={this.openQuickSelector}>
           <v-list-item-action>BS</v-list-item-action>
           <v-list-item-content>
-            (Quick) Booru Selector
+            <booru-switcher-part ref="booruSelector" />
           </v-list-item-content>
         </v-list-item>
 
