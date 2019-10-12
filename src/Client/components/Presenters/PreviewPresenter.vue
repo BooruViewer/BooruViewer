@@ -71,6 +71,7 @@
       if (url !== expected)
         return
 
+      // TODO: Only get the notes when it's possible for notes to exist? [Models/Dannbooru/Post.LastNotedAt]
       this.GetNotes(this.image.id)
     }
 
@@ -388,17 +389,6 @@
         }
       }
 
-      .preview {
-        max-width: 100% !important;;
-        /*height: auto;*/
-        margin: auto !important;
-
-        img {
-          object-fit: contain;
-          height: 100%;
-          width: 100%;
-        }
-      }
     }
   }
 
