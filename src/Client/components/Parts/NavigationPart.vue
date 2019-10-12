@@ -16,7 +16,6 @@
     setDrawerOpen
 
     get drawerOpen() {
-      console.log(this.isDrawerOpen)
       return this.isDrawerOpen
     }
 
