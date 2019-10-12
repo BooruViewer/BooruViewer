@@ -35,6 +35,8 @@ namespace BooruViewer.Models.Danbooru
                     opts => opts.MapFrom(src => src.CreatedAt))
                 .ForMember(dto => dto.LastModifiedAt,
                     opts => opts.MapFrom(src => src.UpdatedAt))
+                .ForMember(dto => dto.HasNotes,
+                    opts => opts.MapFrom(src => src.LastNotedAt.HasValue))
                 .ForMember(dto => dto.Size,
                     opts => opts.MapFrom(src => new SizeDto(src.ImageWidth, src.ImageHeight)))
                 .ForMember(dto => dto.Uploader,

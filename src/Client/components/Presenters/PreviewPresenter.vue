@@ -217,6 +217,8 @@
             return
           if (note.y < 0 || note.y > imageHeight)
             return
+          if (!note.isActive)
+            return
 
           const left = `calc((${note.x} / ${imageWidth}) * 100%)`
           const top = `calc((${note.y} / ${imageHeight}) * 100%)`

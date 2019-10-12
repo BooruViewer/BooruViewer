@@ -13,6 +13,10 @@ namespace BooruViewer.Models.Response.Posts
         public Boolean HasChildren => this.ChildIds.Count > 0;
 
         public Boolean IsVisible { get; set;  }
+        public Boolean IsPending { get; set; }
+        public Boolean IsDeleted { get; set; }
+
+        public Boolean? HasNotes { get; set; }
 
         public String Hash { get; set;  }
 
