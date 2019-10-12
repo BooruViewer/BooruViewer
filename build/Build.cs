@@ -1,15 +1,14 @@
 using System;
-using System.Linq;
-using JetBrains.Annotations;
+using System.IO.Compression;
 using Nuke.Common;
 using Nuke.Common.Execution;
 using Nuke.Common.Git;
+using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Utilities.Collections;
-using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
@@ -37,7 +36,7 @@ class Build : NukeBuild
     [GitRepository] readonly GitRepository GitRepository;
     [GitVersion] readonly GitVersion GitVersion;
 
-    AbsolutePath SourceDirectory => RootDirectory / "src";
+    AbsolutePath SourceDirectory => RootDirectory / "src" / "Server";
     AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
 
     Target Clean => _ => _
@@ -94,5 +93,10 @@ class Build : NukeBuild
                     .SetRuntime(build.Item1)
                     .SetOutput(ArtifactsDirectory / "BooruViewer" / build.Item1)
                     .SetProperty("PublishReadyToRun", build.Item2)));
+
+            foreach (var runtime in runtimes)
+            {
+                CompressionTasks.CompressZip(ArtifactsDirectory / "BooruViewer" / runtime, ArtifactsDirectory / $"BooruViewer ({runtime})-{GitVersion.Sha}.zip", null, CompressionLevel.Optimal);
+            }
         });
 }
