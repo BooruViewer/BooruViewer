@@ -71,8 +71,8 @@
       if (url !== expected)
         return
 
-      // TODO: Only get the notes when it's possible for notes to exist? [Models/Dannbooru/Post.LastNotedAt]
-      this.GetNotes(this.image.id)
+      if (this.image.hasNotes)
+        this.GetNotes(this.image.id)
     }
 
     downloadViaImgEl() {
