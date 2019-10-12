@@ -3,35 +3,19 @@
 
   export default {
     components: { NavigationPart },
-    data() {
-      return {
-        clipped: false,
-        drawer: false,
-        fixed: false,
-        items: [
-          {
-            icon: 'mdi-apps',
-            title: 'Welcome',
-            to: '/',
-          },
-          {
-            icon: 'mdi-chart-bubble',
-            title: 'Inspire',
-            to: '/inspire',
-          },
-        ],
-        miniVariant: false,
-        right: true,
-        rightDrawer: false,
-        title: 'Vuetify.js',
+    computed: {
+      drawer: {
+        get: function() {
+          return this.$store.getters["ui/getDrawerOpen"]
+        },
+        set(open) {
+          this.$store.commit("ui/setDrawerOpen", open)
+        }
       }
     },
     methods: {
-      stop(callback) {
-        return (e) => {
-          e.stopPropagation()
-          callback()
-        }
+      toggleDrawer() {
+        this.drawer = !this.drawer;
       },
     },
     render: function (h) {
@@ -39,15 +23,11 @@
 
         <navigation-part />
 
-        <v-app-bar clipped-left fixed="" app>
-          <v-app-bar-nav-icon onClick={this.stop(() => this.drawer = !this.drawer)}/>
-          <v-btn icon onClick={this.stop(() => this.miniVariant = !this.miniVariant)}>
-            <v-icon>mdi-{`chevron-${this.miniVariant ? 'right' : 'left'}`}</v-icon>
-          </v-btn>
-          <v-btn icon onClick={this.stop(() => this.clipped = !this.clipped)}>
-            <v-icon>mdi-application</v-icon>
-          </v-btn>
+        <v-app-bar clipped-left fixed app dense>
+          <v-app-bar-nav-icon onClick={this.toggleDrawer}/>
+          <v-toolbar-title>Booru Viewer</v-toolbar-title>
         </v-app-bar>
+
         <v-content>
           <v-container>
             <nuxt/>

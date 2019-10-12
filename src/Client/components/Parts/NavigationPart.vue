@@ -16,11 +16,12 @@
     setDrawerOpen
 
     get drawerOpen() {
+      console.log(this.isDrawerOpen)
       return this.isDrawerOpen
     }
 
     set drawerOpen(open) {
-      this.setDrawerOpen({ open })
+      this.setDrawerOpen(open)
     }
 
     @Ui.Getter(ui.getters.DrawerMini)

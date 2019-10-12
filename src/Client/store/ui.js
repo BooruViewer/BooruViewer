@@ -44,11 +44,11 @@ export const mutations = {
     state.paneWidths.left = leftWidth
     state.paneWidths.right = rightWidth
   },
-  [ui.mutations.DrawerOpen](state, data) {
-    state.drawerOpen = data.open || data
+  [ui.mutations.DrawerOpen](state, open) {
+    state.drawerOpen = open
   },
-  [ui.mutations.DrawerMini](state, data) {
-    state.drawerMini = data.mini || data
+  [ui.mutations.DrawerMini](state, mini) {
+    state.drawerMini = mini
   },
 }
 
@@ -57,6 +57,6 @@ export const actions = {
     commit(ui.mutations.DialogVisibility, ({ dialog, visible: true }))
   },
   [ui.actions.ToggleDrawer]({ commit, state }) {
-    commit(ui.mutations.DrawerOpen, { open: !state.drawerOpen })
+    commit(ui.mutations.DrawerOpen, !state.drawerOpen)
   },
 }
