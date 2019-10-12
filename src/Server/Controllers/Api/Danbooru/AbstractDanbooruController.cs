@@ -155,6 +155,29 @@ namespace BooruViewer.Controllers.Api.Danbooru
             }
         }
 
+        [HttpGet("notes/{postId}")]
+        public async Task<JsonResult> GetNotesById(UInt64 postId)
+        {
+            try
+            {
+                var notes = await this._api.GetNotesByIdAsync(postId);
+                return this.Json(new ResponseDto<NoteDto[]>(true, this._mapper.Map<NoteDto[]>(notes)));
+            }
+            catch (ApiException crap)
+            {
+                if (!crap.HasContent)
+                    throw;
+
+                var error = await crap.GetContentAsAsync<Request>();
+
+                return this.Json(new ResponseDto<ResponseErrorMessage>(false,
+                    new ResponseErrorMessage(
+                        $"Proxy request to danbooru failed.{Environment.NewLine}" +
+                        $"Reason: {error.Message}{Environment.NewLine}" +
+                        $"Stacktrace: {String.Join(Environment.NewLine, error.Backtrace)}")));
+            }
+        }
+
         [HttpGet("image/{parts}")]
         public override async Task<FileResult> ImageAsync(String parts)
         {

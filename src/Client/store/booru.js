@@ -9,20 +9,25 @@ export const booru = {
     Posts: "getPosts",
     Limit: "getLimit",
     SourceBooru: "getSourceBooru",
+    Notes: "getNotes",
   },
   mutations: {
     Posts: "setPosts",
     Limit: "setLimit",
     SourceBooru: "setSourceBooru",
+    Notes: "setNotes",
   },
   actions: {
     FetchPosts: "fetchPosts",
     RefreshPosts: "refreshPosts",
+    FetchNotes: "fetchNotes",
+    ClearNotes: "clearNotes",
   },
 }
 
 export const state = () => ({
   posts: [],
+  notes: [],
   limit: 100,
   sourceBooru: null,
   blacklist: ["*"],
@@ -30,6 +35,7 @@ export const state = () => ({
 
 export const getters = {
   [booru.getters.Posts]: s => s.posts,
+  [booru.getters.Notes]: s => s.notes,
   [booru.getters.Limit]: s => s.limit,
   [booru.getters.SourceBooru]: s => s.sourceBooru,
 }
@@ -37,6 +43,9 @@ export const getters = {
 export const mutations = {
   [booru.mutations.Posts](state, posts) {
     state.posts = posts
+  },
+  [booru.mutations.Notes](state, notes) {
+    state.notes = notes
   },
   [booru.mutations.Limit](state, limit) {
     state.limit = limit
@@ -70,9 +79,29 @@ export const actions = {
       throw new Error(res.error.message)
     }
   },
-  async [booru.actions.RefreshPosts]({ dispatch }) {
+  [booru.actions.RefreshPosts]({ dispatch }) {
     dispatch(booru.actions.FetchPosts)
   },
+  async [booru.actions.FetchNotes](context, postId) {
+    const { commit, rootGetters, dispatch } = context
+
+    dispatch('api/' + apis.actions.Initialize, null, { root: true })
+    const api = rootGetters['api/' + apis.getters.Instance]
+
+    // await dispatch('auth/ensureAuth', null, { root: true })
+
+    const id = postId.id || postId.postId || postId
+
+    const res = await api.getNotes(id)
+    if (res.isSuccess) {
+      commit(booru.mutations.Notes, res.data)
+    } else {
+      throw new Error(res.error.nessage);
+    }
+  },
+  [booru.actions.ClearNotes]({ commit }) {
+    commit(booru.mutations.Notes, [])
+  }
 }
 
 

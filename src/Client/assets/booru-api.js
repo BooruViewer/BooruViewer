@@ -46,6 +46,17 @@ export class BooruApi {
     return `/api/${this.endpoint}/image/`
   }
 
+  getNotes(postId) {
+    const route = `/api/${this.endpoint}/notes/${postId}`
+
+    const params = {
+
+    }
+
+    return fetch(route + '?' + qs.stringify(params, qsOpts))
+      .then(res => res.json())
+  }
+
   getAutocompleteSuggestions(tag) {
     const route = `/api/${this.endpoint}/autocomplete`
 

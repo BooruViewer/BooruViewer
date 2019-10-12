@@ -46,6 +46,8 @@ namespace BooruViewer.Models.Danbooru
                     opts => opts.MapFrom(src => src.PostCount))
                 .ForMember(dto => dto.Type,
                     opts => opts.ConvertUsing(new TagTypeToTagTypesValueConverter(), src => src.Type));
+
+            this.CreateMap<Note, NoteDto>();
         }
 
         private class SourceDtoFromPostValueConverter : IValueConverter<Post, SourceDto>
