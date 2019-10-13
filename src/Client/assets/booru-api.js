@@ -1,7 +1,7 @@
 import qs from "qs"
 
 const qsOpts = {
-  arrayFormat: "repeat"
+  arrayFormat: "repeat",
 }
 
 export const Endpoints = {
@@ -49,9 +49,7 @@ export class BooruApi {
   getNotes(postId) {
     const route = `/api/${this.endpoint}/notes/${postId}`
 
-    const params = {
-
-    }
+    const params = {}
 
     return fetch(route + '?' + qs.stringify(params, qsOpts))
       .then(res => res.json())
@@ -61,7 +59,8 @@ export class BooruApi {
     const route = `/api/${this.endpoint}/autocomplete`
 
     const params = {
-      tag
+      tag,
+      limit: 7,
     }
 
     return fetch(route + '?' + qs.stringify(params, qsOpts))
