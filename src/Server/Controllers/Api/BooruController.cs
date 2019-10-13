@@ -7,7 +7,7 @@ namespace BooruViewer.Controllers.Api
     public abstract class BooruController : Controller
     {
         public abstract Task<JsonResult> PostsAsync(String tags, Int64 page, Int64 limit);
-        public abstract Task<JsonResult> AutocompleteAsync(String tag);
+        public abstract Task<JsonResult> AutocompleteAsync(String tag, Int32 limit = 10);
 
         public abstract Task<JsonResult> Authenticate(String username, String password);
 

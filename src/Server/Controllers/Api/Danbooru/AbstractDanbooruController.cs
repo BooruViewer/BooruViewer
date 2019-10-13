@@ -71,12 +71,12 @@ namespace BooruViewer.Controllers.Api.Danbooru
         }
 
         [HttpGet("autocomplete")]
-        public override async Task<JsonResult> AutocompleteAsync(String tag)
+        public override async Task<JsonResult> AutocompleteAsync(String tag, Int32 limit = 10)
         {
             AutoComplete[] autoComplete;
             try
             {
-                autoComplete = await this._api.GetAutocompleteAsync(tag, limit: 7, authorization: this.GetAuthenticationHeader());
+                autoComplete = await this._api.GetAutocompleteAsync(tag, this.GetAuthenticationHeader());
             }
             catch (ApiException crap)
             {
@@ -93,7 +93,7 @@ namespace BooruViewer.Controllers.Api.Danbooru
             }
 
             var response = new ResponseDto<IEnumerable<AutoCompleteDto>>(true,
-                this._mapper.Map<IEnumerable<AutoCompleteDto>>(autoComplete));
+                this._mapper.Map<IEnumerable<AutoCompleteDto>>(autoComplete.Take(limit)));
             return this.Json(response);
         }
 
