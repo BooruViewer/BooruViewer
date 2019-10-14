@@ -6,6 +6,7 @@ export const ui = {
     BlacklistedTags: "getBlacklistedTags",
     DrawerOpen: "getDrawerOpen",
     DrawerMini: "getDrawerMini",
+    TagSearchSelected: "getTagSearchSelected",
   },
   mutations: {
     PaneWidths: "setPaneWidth",
@@ -15,6 +16,9 @@ export const ui = {
     RemoveBlacklistTag: "removeBlacklistTag",
     DrawerOpen: "setDrawerOpen",
     DrawerMini: "setDrawerMini",
+    TagSearchSelected: "setTagSearchSelected",
+    RemoveTagSearchSelectedItem: "removeTagSearchSelectedItem",
+    AddTagSearchSelectedItem: "addTagSearchSelectedItem",
   },
   actions: {
     OpenDialog: "openDialog",
@@ -30,13 +34,16 @@ export const state = () => ({
   },
   drawerOpen: true,
   drawerMini: true,
-  blacklist: ["dialogs"],
+  tagSearchText: "",
+  tagSearchSelected: [{name: "topless", type: "general"}],
+  blacklist: ["dialogs", "tagSearchText"],
 })
 
 export const getters = {
   [ui.getters.PaneWidths]: s => s.paneWidths,
   [ui.getters.DrawerOpen]: s => s.drawerOpen,
   [ui.getters.DrawerMini]: s => s.drawerMini,
+  [ui.getters.TagSearchSelected]: s => s.tagSearchSelected,
 }
 
 export const mutations = {
@@ -49,6 +56,20 @@ export const mutations = {
   },
   [ui.mutations.DrawerMini](state, mini) {
     state.drawerMini = mini
+  },
+  [ui.mutations.TagSearchSelected](state, selected) {
+    state.tagSearchSelected = selected
+  },
+  [ui.mutations.RemoveTagSearchSelectedItem](state, item) {
+    const idx = state.tagSearchSelected.indexOf(item)
+
+    if (idx === -1)
+      return
+
+    state.tagSearchSelected.splice(idx, 1)
+  },
+  [ui.mutations.AddTagSearchSelectedItem](state, item) {
+    state.tagSearchSelected.push(item)
   },
 }
 

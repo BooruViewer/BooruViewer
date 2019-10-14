@@ -2,13 +2,16 @@
   import { Component, Watch, namespace, Vue } from "nuxt-property-decorator"
   import { Debounce } from "lodash-decorators"
   import { booru } from "~/store/booru"
+  import { ui } from "~/store/ui"
   import TagsPresenter from "~/components/Presenters/TagsPresenter"
+  import { unionBy } from "lodash"
 
   const Booru = namespace("booru")
   const Route = namespace("route")
+  const Ui = namespace("ui")
 
   @Component({
-    components: {TagsPresenter},
+    components: { TagsPresenter },
   })
   export default class PostsPresenter extends Vue {
 
@@ -26,6 +29,11 @@
     @Booru.Action(booru.actions.FetchPosts)
     FetchPosts
 
+    @Ui.Getter(ui.getters.TagSearchSelected)
+    TagSearch
+    @Ui.Mutation(ui.mutations.TagSearchSelected)
+    SetTagSearch
+
     isLoading = false
     activeIdx = 0
 
@@ -35,6 +43,28 @@
 
     @Watch("Posts")
     onPostsChanged(posts, previous) {
+
+      if (this.TagSearch.filter(t => t.type === "unknown")) {
+
+        const typeFixedTags = []
+        const map = new Map()
+        const allTags = posts.map(post => post.tags).flat()
+
+        for (const tag of allTags) {
+          if (map.has(tag.name))
+            continue
+          map.set(tag.name, true)
+
+          const matchingSearchTag = this.TagSearch.find(t => t.name === tag.name);
+          if (matchingSearchTag) {
+            typeFixedTags.push({...matchingSearchTag, type: tag.type})
+          }
+        }
+
+        this.SetTagSearch(unionBy(typeFixedTags, this.TagSearch, "name"))
+      }
+
+
       if (posts.length > 0) { // Loaded
         this.isLoading = false
         this.$emit("postSelected", this.VisiblePosts[0])
@@ -50,7 +80,7 @@
         params: {
           tags: this.Tags,
           page: this.Page + 1,
-        }
+        },
       })
     }
 
@@ -60,7 +90,7 @@
         params: {
           tags: this.Tags,
           page: this.Page - 1,
-        }
+        },
       })
     }
 
@@ -128,8 +158,9 @@
                   onDblclick={this.onPostDoubleClicked}>
           <v-layout class={["align-center", "justify-center", "thumbnail", { ...elevations }]}
                     data-idx={idx}>
-            <v-tooltip bottom offset-overflow open-delay="500" close-delay="250" max-width="25vw" scopedSlots={tooltipSlots}>
-              <tags-presenter tags={post.tags} />
+            <v-tooltip bottom offset-overflow open-delay="500" close-delay="250" max-width="25vw"
+                       scopedSlots={tooltipSlots}>
+              <tags-presenter tags={post.tags}/>
             </v-tooltip>
           </v-layout>
         </a>
