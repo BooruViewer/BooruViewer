@@ -46,21 +46,13 @@
 
     isDelimitorString = false
     listIdx = -1
-    _searchText = null
-
-    get searchText() {
-      return this._searchText
-    }
-
-    set searchText(text) {
-      this._searchText = text
-    }
+    searchText = null
 
     @Watch("searchText")
     onSearchTextChanged = debounce(this._onSearchTextChanged, 500)
 
     _onSearchTextChanged() {
-      this.FetchAutocompleteResults()
+      this.FetchAutocompleteResults(this.searchText)
     }
 
     @Watch("AutocompleteResults")
@@ -87,20 +79,20 @@
         if (this.listIdx >= 0)
           return
 
-        if (this.searchText.trim() === "" || this.searchText === null) {
-          this.doNavigate()
-          return
-        }
+        // if (this.searchText.trim() === "" || this.searchText === null) {
+        //   this.doNavigate()
+        //   return
+        // }
 
-        const text = this.searchText
-
-        this.AddSelectedTag({
-          name: text,
-          type: "unknown",
-          count: -1,
-        })
-
-        this.searchText = null
+        // const text = this.searchText
+        //
+        // this.AddSelectedTag({
+        //   name: text,
+        //   type: "unknown",
+        //   count: -1,
+        // })
+        //
+        // this.searchText = null
       }
 
       if (e.which === 32) {
@@ -153,6 +145,15 @@
       // DO NOT NAVIGATE WITH STRINGS IN THE SELECTED TAGS
       if (this.selectedTags.find(t => typeof t === "string")) {
         console.error('[TagSearchPart] One of the Selected Tags is not structured properly.')
+        return
+      }
+
+      if (this.selectedTags.length === 0) {
+        if (this.Tags === "*" && parseInt(this.Page, 10) === 1) {
+          this.RefreshPosts()
+        } else {
+          this.$router.push("/*/1")
+        }
         return
       }
 
