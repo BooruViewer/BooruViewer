@@ -95,6 +95,22 @@
       osInstance.scroll({ y: '0%' }, 200)
     }
 
+    _scrollLock() {
+      if (!this.$refs.scroller)
+        return
+
+      const osInstance = this.$refs.scroller.osInstance()
+      osInstance.options("overflowBehavior.y", "hidden")
+    }
+
+    _scrollUnlock() {
+      if (!this.$refs.scroller)
+        return
+
+      const osInstance = this.$refs.scroller.osInstance()
+      osInstance.options("overflowBehavior.y", "scroll")
+    }
+
     onImageLoaded(e) {
       console.log(`[PreviewPresenter] Finished loading image.`)
       // Ensure that we are still the same post!
@@ -109,12 +125,15 @@
     onDoubleClick(e) {
       const url = this.ApiInstance.imageRoute + this.image.files.original
       const name = `${this.SourceBooru.name}-${this.image.hash}${this.image.files.extension}`
+
+      this._scrollLock()
       this._scrollToTop()
       this.isSaving = true
       fetch(url)
           .then(res => res.blob())
           .then(blob => {
             saveAs(blob, name)
+            this._scrollUnlock()
             this.isSaving = false
           })
     }
@@ -213,6 +232,7 @@
         const { height: imageHeight, width: imageWidth } = this.image.size
 
         const objToFrag = (note, idx) => {
+          // TODO: Replace with dedicated note component.
           if (note.x < 0 || note.x > imageWidth)
             return
           if (note.y < 0 || note.y > imageHeight)
@@ -238,22 +258,29 @@
           return figure
         }
 
-        const notes = this.Notes.map(objToFrag)
+        const imageEventHandlers = {
+          'dblclick': this.onDoubleClick,
+        }
 
-        const noteOverlay = notes &&
-            <section class="notesOverlay">
-              {notes}
-            </section>
+        let notesOverlay = false
+
+        if (this.image.hasNotes) {
+          const notes = this.Notes.map(objToFrag)
+          notesOverlay = notes &&
+              <section class="notesOverlay" {...{ on: imageEventHandlers}}>
+                {notes}
+              </section>
+        }
 
         const postBody = <div class="post-body">
           <div class="contentStack"
                style={{ 'max-width': this.image.size.width + 'px', 'max-height': this.image.size.height + 'px' }}>
-            {noteOverlay}
+            {notesOverlay || null}
             <img src={this.previewUrl}
                  class={{ isLoading: this.isLoading }}
                  ref="img"
                  alt="Image!"
-                 onDblclick={this.onDoubleClick}/>
+                 {...{ on: imageEventHandlers}}/>
           </div>
         </div>
 
