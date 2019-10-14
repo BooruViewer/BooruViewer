@@ -112,7 +112,7 @@ export const actions = {
   [booru.actions.ClearNotes]({ commit }) {
     commit(booru.mutations.Notes, [])
   },
-  async [booru.actions.FetchAutocompleteResults](context) {
+  async [booru.actions.FetchAutocompleteResults](context, searchText) {
     const { commit, rootGetters, dispatch } = context
 
     commit(booru.mutations.TagSearchResults, [])
@@ -120,8 +120,7 @@ export const actions = {
     dispatch('api/' + apis.actions.Initialize, null, { root: true })
     const api = rootGetters['api/' + apis.getters.Instance]
 
-    const searchText = rootGetters['ui/' + uis.getters.TagSearchText]
-    if (searchText == null || searchText === "")
+    if (searchText == null || searchText.trim() === "")
       return
 
     const res = await api.getAutocompleteSuggestions(searchText)
