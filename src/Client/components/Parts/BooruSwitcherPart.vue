@@ -31,7 +31,7 @@
       // When the router loads from cold, Page is a string.
       // When the route is set from code, it's an integer.
       // noinspection EqualityComparisonWithCoercionJS
-      if (this.Page == 1) {
+      if (parseInt(this.Page, 10) == 1) {
         // Refresh posts because you cannot navigate to the same route
         this.RefreshPosts()
         return;

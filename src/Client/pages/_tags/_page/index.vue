@@ -6,7 +6,7 @@
   import PreviewPresenter from "~/components/Presenters/PreviewPresenter"
 
   const Ui = namespace("ui")
-
+  const Route = namespace("route")
 
   @Component({
     components: {
@@ -15,13 +15,40 @@
   })
   export default class Index extends Vue {
 
+    @Route.State(s => s.params.tags)
+    Tags
+
     @Ui.Getter(ui.getters.PaneWidths)
     PaneWidths
 
     @Ui.Mutation(ui.mutations.PaneWidths)
     SetPaneWidths
 
+    @Ui.Getter(ui.getters.TagSearchSelected)
+    TagSearch
+    @Ui.Mutation(ui.mutations.TagSearchSelected)
+    SetTagSearch
+
     image = null
+
+    created() {
+      const tagsRoute = this.TagSearch.map(t => t.name).join("+")
+
+      if (tagsRoute !== this.Tags) {
+        if (this.Tags === "*") {
+          this.SetTagSearch([])
+          return
+        }
+
+        const tags = this.Tags.split(/\+/g)
+            .map(s => ({
+              name: s,
+              type: "unknown",
+              count: -1,
+            }))
+        this.SetTagSearch(tags)
+      }
+    }
 
     onResized(widths) {
       console.log("Resized!")

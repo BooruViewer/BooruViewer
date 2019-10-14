@@ -1,8 +1,9 @@
 <script>
   import NavigationPart from "~/components/Parts/NavigationPart"
+  import TagSearchPart from "~/components/Parts/TagSearchPart"
 
   export default {
-    components: { NavigationPart },
+    components: { NavigationPart, TagSearchPart },
     computed: {
       drawer: {
         get: function() {
@@ -26,6 +27,10 @@
         <v-app-bar clipped-left fixed app dense>
           <v-app-bar-nav-icon onClick={this.toggleDrawer}/>
           <v-toolbar-title>Booru Viewer</v-toolbar-title>
+
+          <v-spacer />
+
+          <tag-search-part />
         </v-app-bar>
 
         <v-content>

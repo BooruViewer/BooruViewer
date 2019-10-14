@@ -1,4 +1,5 @@
 import { api as apis } from "~/store/api"
+import { ui as uis } from "~/store/ui"
 
 const options = {
   hidePostsWhileLoading: true,
@@ -10,24 +11,29 @@ export const booru = {
     Limit: "getLimit",
     SourceBooru: "getSourceBooru",
     Notes: "getNotes",
+    TagSearchResults: "getTagSearchResults",
   },
   mutations: {
     Posts: "setPosts",
     Limit: "setLimit",
     SourceBooru: "setSourceBooru",
     Notes: "setNotes",
+    TagSearchResults: "setTagSearchResults",
   },
   actions: {
     FetchPosts: "fetchPosts",
     RefreshPosts: "refreshPosts",
     FetchNotes: "fetchNotes",
     ClearNotes: "clearNotes",
+    FetchAutocompleteResults: "fetchAutocompleteResults",
+    ClearAutocompleteResults: "clearAutocompleteResults",
   },
 }
 
 export const state = () => ({
   posts: [],
   notes: [],
+  autocompleteResults: [],
   limit: 100,
   sourceBooru: null,
   blacklist: ["*"],
@@ -36,6 +42,7 @@ export const state = () => ({
 export const getters = {
   [booru.getters.Posts]: s => s.posts,
   [booru.getters.Notes]: s => s.notes,
+  [booru.getters.TagSearchResults]: s => s.autocompleteResults,
   [booru.getters.Limit]: s => s.limit,
   [booru.getters.SourceBooru]: s => s.sourceBooru,
 }
@@ -46,6 +53,9 @@ export const mutations = {
   },
   [booru.mutations.Notes](state, notes) {
     state.notes = notes
+  },
+  [booru.mutations.TagSearchResults](state, results) {
+    state.autocompleteResults = results
   },
   [booru.mutations.Limit](state, limit) {
     state.limit = limit
@@ -71,7 +81,7 @@ export const actions = {
     if (tags === "*")
       tags = ""
 
-    const res = await api.getPosts(tags, rootState.route.params.page, state.limit)
+    const res = await api.getPosts(tags.replace(/\+/g, " "), rootState.route.params.page, state.limit)
     if (res.isSuccess) {
       commit(booru.mutations.SourceBooru, res.data.sourceBooru)
       commit(booru.mutations.Posts, res.data.posts)
@@ -101,7 +111,28 @@ export const actions = {
   },
   [booru.actions.ClearNotes]({ commit }) {
     commit(booru.mutations.Notes, [])
-  }
+  },
+  async [booru.actions.FetchAutocompleteResults](context, searchText) {
+    const { commit, rootGetters, dispatch } = context
+
+    commit(booru.mutations.TagSearchResults, [])
+
+    dispatch('api/' + apis.actions.Initialize, null, { root: true })
+    const api = rootGetters['api/' + apis.getters.Instance]
+
+    if (searchText == null || searchText.trim() === "")
+      return
+
+    const res = await api.getAutocompleteSuggestions(searchText)
+    if (res.isSuccess) {
+      commit(booru.mutations.TagSearchResults, res.data)
+    } else {
+      throw new Error(res.error.message)
+    }
+  },
+  [booru.actions.ClearAutocompleteResults]({ commit }) {
+    commit(booru.mutations.TagSearchResults, [])
+  },
 }
 
 
