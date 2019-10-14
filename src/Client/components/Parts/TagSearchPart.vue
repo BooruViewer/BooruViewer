@@ -79,20 +79,20 @@
         if (this.listIdx >= 0)
           return
 
-        // if (this.searchText.trim() === "" || this.searchText === null) {
-        //   this.doNavigate()
-        //   return
-        // }
+        if (this.searchText === null || this.searchText.trim() === "") {
+          this.doNavigate()
+          return
+        }
 
-        // const text = this.searchText
-        //
-        // this.AddSelectedTag({
-        //   name: text,
-        //   type: "unknown",
-        //   count: -1,
-        // })
-        //
-        // this.searchText = null
+        const text = this.searchText
+
+        this.AddSelectedTag({
+          name: text,
+          type: "unknown",
+          count: -1,
+        })
+
+        this.searchText = null
       }
 
       if (e.which === 32) {
