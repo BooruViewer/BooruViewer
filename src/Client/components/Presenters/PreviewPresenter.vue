@@ -268,7 +268,7 @@
         </div>
       }
 
-      return <overlay-scrollbars options={{ overflowBehaviour: { x: 'h' }, scrollbars: { autoHide: 'leave' } }}
+      return <overlay-scrollbars options={{ overflowBehavior: { x: 'h' }, scrollbars: { autoHide: 'leave' } }}
                                  ref="scroller">
         <div>
           {content}
