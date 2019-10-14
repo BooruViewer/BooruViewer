@@ -96,7 +96,7 @@ class Build : NukeBuild
 
             foreach (var runtime in runtimes)
             {
-                CompressionTasks.CompressZip(ArtifactsDirectory / "BooruViewer" / runtime, ArtifactsDirectory / $"BooruViewer ({runtime})-{GitVersion.Sha}.zip", null, CompressionLevel.Optimal);
+                CompressionTasks.CompressZip(ArtifactsDirectory / "BooruViewer" / runtime, ArtifactsDirectory / $"BooruViewer {runtime} ({GitVersion.BranchName.Replace("/", "-")}-{GitVersion.Sha}).zip", null, CompressionLevel.Optimal);
             }
         });
 }
