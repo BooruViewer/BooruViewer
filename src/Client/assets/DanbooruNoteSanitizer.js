@@ -7,7 +7,10 @@ export default function createNoteFragment(rawBody) {
 
   let templ = document.createElement(`template`);
   templ.innerHTML =
-    rawBody.replace(/<( |-|3|:|>|\s*$)/g, `&lt;$1`);
+    rawBody.replace(/<( |-|3|:|>|\s*$)/g, `&lt;$1`)
+      .replace(/<tn>/g, "<p class='tn'>")
+      .replace(/<\/tn>/g, "</p>")
+      .replace(/\n/g, "<br/>")
 
   let frag = templ.content;
   let wlkr = document.createTreeWalker(frag, NodeFilter.SHOW_ALL, null, false);
