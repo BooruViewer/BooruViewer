@@ -32,9 +32,15 @@ const blacklistReducer = state => {
   return filtered
 }
 
+const setState = (key, state, storage) => {
+  console.log('[VueX/PersistedState] Set State Running')
+  return storage.setItem(key, JSON.stringify(blacklistReducer(state))) // TODO Compress when data is large?
+}
+
 // Debounce the blacklist reducer, because it can get quite heavy.
 export default ({ store }) => {
   createPersistedState({
-    reducer: blacklistReducer
+    // reducer: blacklistReducer,
+    setState: _.debounce(setState, 1000),
   })(store)
 }
