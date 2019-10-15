@@ -1,7 +1,7 @@
 <script>
   import { Component, Prop, Watch, namespace, Vue } from "nuxt-property-decorator"
   import TagsPresenter from "~/components/Presenters/TagsPresenter"
-  import NoteSanitizer from "~/assets/DanbooruNoteSanitizer"
+  import NotePresenter from "~/components/Presenters/NotePresenter"
   import saveAs from "file-saver"
   import { booru } from "~/store/booru"
   import { api } from "~/store/api"
@@ -15,7 +15,7 @@
   // 1k+ Notes: https://danbooru.donmai.us/posts/9512413649015
   // Example implementation: https://github.com/bipface/galkontinuum/blob/66269ec2d1590b89180bc215deba105542843ba2/galkontinuum-debug.user.js#L1504
   @Component({
-    components: { TagsPresenter },
+    components: { NotePresenter, TagsPresenter },
   })
   export default class PreviewPresenter extends Vue {
 
@@ -229,33 +229,12 @@
           </div>
         </div>
 
-        const { height: imageHeight, width: imageWidth } = this.image.size
-
-        const objToFrag = (note, idx) => {
-          // TODO: Replace with dedicated note component.
-          if (note.x < 0 || note.x > imageWidth)
-            return
-          if (note.y < 0 || note.y > imageHeight)
-            return
+        const renderNote = (note) => {
+          // Maybe replace with babel-plugin-jsx-display-if ??
+          // Would then be display-if={note.isActive} on note-presenter
           if (!note.isActive)
-            return
-
-          const left = `calc((${note.x} / ${imageWidth}) * 100%)`
-          const top = `calc((${note.y} / ${imageHeight}) * 100%)`
-          const width = `calc((${Math.min(note.width, imageWidth - note.x)} / ${imageWidth}) * 100%)`
-          const height = `calc((${Math.min(note.height, imageHeight - note.y)} / ${imageHeight}) * 100%)`
-
-          const div = document.createElement("div")
-          const sanitizedNote = NoteSanitizer(note.body)
-          div.append(sanitizedNote)
-
-          const figure = <figure style={{ left, top, width, height }}>
-            <section class="noteContainer">
-              <section class="noteOffset"/>
-              <figcaption domPropsInnerHTML={div.innerHTML} />
-            </section>
-          </figure>
-          return figure
+            return null // null = do not render, in JSX.
+          return <note-presenter note={note} image-dimensions={this.image.size} />
         }
 
         const imageEventHandlers = {
@@ -265,7 +244,7 @@
         let notesOverlay = false
 
         if (this.image.hasNotes) {
-          const notes = this.Notes.map(objToFrag)
+          const notes = this.Notes.map(renderNote)
           notesOverlay = notes &&
               <section class="notesOverlay" {...{ on: imageEventHandlers}}>
                 {notes}
@@ -289,6 +268,7 @@
           {postBody}
         </div>
       } else {
+        // TODO: Make this more fun! Include an image maybe?
         content = <div>
           <h1>Oh noes!</h1>
           <p>There appears to be no posts available!</p>
@@ -369,43 +349,6 @@
           width: 100%;
           height: 100%;
           position: relative;
-
-          // TODO: Offer an inline and popout note style
-          figure {
-            position: absolute;
-            margin: 0px;
-            z-index: 0;
-            background: hsla(60, 100%, 96.7%, 0.3);
-            border-style: solid;
-            border-width:1px;
-            border-color: hsla(0, 0, 0, 0.3);
-
-            &:hover figcaption {
-              opacity: 1;
-              transition: opacity 200ms;
-            }
-          }
-
-          .noteContainer {
-            height: 100%;
-
-            .noteOffset {
-              height: calc(100% + 1.85mm)
-            }
-
-            // TODO: Make a dark theme friendly version, preferably using MD colors.
-            figcaption {
-              transition: opacity 250ms;
-              opacity: 0;
-              position: sticky;
-              bottom: 0px;
-              padding: 1mm;
-              min-width: min-content;
-              border-color: hsla(0, 0%, 10%, 1);
-              color: hsla(0, 0%, 10%, 1);
-              background: hsla(60, 100%, 96.7%, .95);
-            }
-          }
         }
 
         img {
