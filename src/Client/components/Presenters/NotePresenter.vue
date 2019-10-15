@@ -42,17 +42,24 @@
       const height = (min(this.Note.height, imageHeight - this.Note.y) / imageHeight) * 100 + '%'
 
       let verticalSide = 'left'
+
       let horizontalSide = 'top'
+      let horizontalPosition = 'calc(100% + 1.85mm)'
 
       if (leftP > 75)
         verticalSide = 'right'
-      if (topP > 75)
+      if (topP > 75) {
         horizontalSide = 'bottom'
+        // This makes smaller notes appear a lot higher above where they should be
+        horizontalPosition = `calc(${this.Note.height}px + ${height} + -1.85mm)`
+      }
+
+      const figCaptStyle = { visibility: this.visibility, [verticalSide]: 0, [horizontalSide]: horizontalPosition }
 
       return <figure style={{ left, top, width, height }} onMouseenter={this.onMouseEnter}
                      onMouseleave={this.onMouseLeave}>
         <section class="noteContainer">
-          <figcaption domPropsInnerHTML={div.innerHTML} style={{ visibility: this.visibility, [verticalSide]: 0, [horizontalSide]: 'calc(100% + 1.85mm)' }} ref="caption"/>
+          <figcaption domPropsInnerHTML={div.innerHTML} style={figCaptStyle} ref="caption"/>
         </section>
       </figure>
     }
