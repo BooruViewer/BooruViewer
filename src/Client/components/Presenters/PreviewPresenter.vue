@@ -356,7 +356,7 @@
 
           // TODO: Decide to respect the Preview Image dimensjons, just use the original, or continue like this.
           object-fit: contain;
-          height: 100%;
+          /*height: 100%;*/ // This causes vivaldi from showing the image... It shrinks it to basically 0px.
           width: 100%;
         }
       }
