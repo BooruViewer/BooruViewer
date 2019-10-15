@@ -79,7 +79,7 @@
         name: "tags-page",
         params: {
           tags: this.Tags,
-          page: this.Page + 1,
+          page: parseInt(this.Page, 10) + 1,
         },
       })
     }
@@ -89,7 +89,7 @@
         name: "tags-page",
         params: {
           tags: this.Tags,
-          page: this.Page - 1,
+          page: parseInt(this.Page, 10) - 1,
         },
       })
     }
