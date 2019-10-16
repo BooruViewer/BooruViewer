@@ -57,7 +57,7 @@
 
           const matchingSearchTag = this.TagSearch.find(t => t.name === tag.name);
           if (matchingSearchTag) {
-            typeFixedTags.push({...matchingSearchTag, type: tag.type})
+            typeFixedTags.push({ ...matchingSearchTag, type: tag.type })
           }
         }
 
@@ -142,13 +142,21 @@
           'elevation-0': idx != this.activeIdx,
         }
 
+        const tags = post.tags.flatMap(p => p.name)
+
         const tooltipSlots = {
           activator: ({ on }) => {
-            return <img src={post.files && post.files.thumbnail}
-                        alt={post.hash}
-                        class={{ 'favorite': post.isFavourited }}
-                        data-idx={idx}
-                        {...{ on }}/>
+            return <div
+                data-has-sound={post.hasSound}
+                data-idx={idx}
+                data-file-ext={post.files.extension}
+                data-tags={tags.join(" ")}>
+              <img src={post.files && post.files.thumbnail}
+                   alt={post.hash}
+                   class={{ 'favorite': post.isFavourited }}
+                   data-idx={idx}
+                   {...{ on }}/>
+            </div>
           },
         }
 
@@ -208,6 +216,37 @@
       &.favorite {
         box-shadow: 0px 2px 4px -1px rgba(255, 105, 180, 0.8), 0px 4px 5px 0px rgba(255, 105, 180, 0.6), 0px 1px 10px 0px rgba(255, 105, 180, 0.5) !important;
       }
+    }
+
+    div {
+      &[data-file-ext=".mp4"]::before,
+      &[data-file-ext=".swf"]::before,
+      &[data-file-ext=".webm"]::before,
+      &[data-file-ext=".zip"]::before,
+      &[data-tags~="animated"]::before {
+        content: "►";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.5);
+        text-align: center;
+        line-height: 1.25em;
+        font-size: 87.5%;
+      }
+
+      &[data-has-sound="true"]::before {
+        content: "♪";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.5);
+        text-align: center;
+        line-height: 1.25em;
+        font-size: 87.5%;
+      }
+
     }
 
   }
