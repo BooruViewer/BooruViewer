@@ -120,20 +120,6 @@
       osInstance.options("overflowBehavior.y", "scroll")
     }
 
-    _scrollForceUpdate() {
-      window.dispatchEvent(new Event("resize"))
-
-      if (!this.$refs.scroller)
-        return
-
-      const osInstance = this.$refs.scroller.osInstance()
-      osInstance.sleep()
-
-      this.$nextTick(() => {
-        osInstance.update(true)
-      })
-    }
-
     onImageLoaded(e) {
       console.log(`[PreviewPresenter] Finished loading image.`)
       // Ensure that we are still the same post!
