@@ -93,6 +93,7 @@
         })
 
         this.searchText = null
+        this.doNavigate()
       }
 
       if (e.which === 32) {
