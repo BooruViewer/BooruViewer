@@ -76,8 +76,11 @@
         console.log('Enter key pressed', this.listIdx, this.searchText)
         e.stopPropagation()
 
-        if (this.listIdx >= 0)
+        if (this.listIdx >= 0) {
+          this.searchText = null
+          this.doNavigate()
           return
+        }
 
         if (this.searchText === null || this.searchText.trim() === "") {
           this.doNavigate()
