@@ -1,7 +1,7 @@
 <script>
   import { Component, Prop, Watch, namespace, Vue } from "nuxt-property-decorator"
   import TagsPresenter from "~/components/Presenters/TagsPresenter"
-  import NotePresenter from "~/components/Presenters/NotePresenter"
+  import { VideoPresenter, FlashPresenter, ImagePresenter } from "~/components/Presenters/MediaPresenters"
   import saveAs from "file-saver"
   import { booru } from "~/store/booru"
   import { api } from "~/store/api"
@@ -15,14 +15,12 @@
   // 1k+ Notes: https://danbooru.donmai.us/posts/9512413649015
   // Example implementation: https://github.com/bipface/galkontinuum/blob/66269ec2d1590b89180bc215deba105542843ba2/galkontinuum-debug.user.js#L1504
   @Component({
-    components: { NotePresenter, TagsPresenter },
+    components: { TagsPresenter, VideoPresenter, ImagePresenter, FlashPresenter },
   })
   export default class PreviewPresenter extends Vue {
 
     @Booru.Getter(booru.getters.SourceBooru)
     SourceBooru
-    @Booru.Getter(booru.getters.Notes)
-    Notes
 
     @Booru.Action(booru.actions.FetchNotes)
     GetNotes
@@ -57,10 +55,21 @@
       this.ClearNotes();
       this._scrollToTop()
       // this.currentPostId = image.id
-      this.previewUrl = image.files.thumbnail
-      this.isLoading = true
 
-      await this.downloadViaImgEl()
+      const { isVideo, isFlash, isUgoria } = this.image.files
+
+      if (!isVideo && !isFlash && !isUgoria) {
+        // Only do the special loading / downloading stuff for images.
+        this.previewUrl = image.files.thumbnail
+        this.isLoading = true
+        await this.downloadViaImgEl()
+      } else {
+        this.previewUrl = this.ApiInstance.imageRoute + this.image.files.preview
+      }
+
+      if (previous && (previous.files.isWebVideo || previous.files.isUgoira)) {
+        // this.$nextTick(this._scrollForceUpdate)
+      }
     }
 
     @Watch("previewUrl")
@@ -109,6 +118,20 @@
 
       const osInstance = this.$refs.scroller.osInstance()
       osInstance.options("overflowBehavior.y", "scroll")
+    }
+
+    _scrollForceUpdate() {
+      window.dispatchEvent(new Event("resize"))
+
+      if (!this.$refs.scroller)
+        return
+
+      const osInstance = this.$refs.scroller.osInstance()
+      osInstance.sleep()
+
+      this.$nextTick(() => {
+        osInstance.update(true)
+      })
     }
 
     onImageLoaded(e) {
@@ -229,39 +252,22 @@
           </div>
         </div>
 
-        const renderNote = (note) => {
-          // Maybe replace with babel-plugin-jsx-display-if ??
-          // Would then be display-if={note.isActive} on note-presenter
-          if (!note.isActive)
-            return null // null = do not render, in JSX.
-          return <note-presenter note={note} image-dimensions={this.image.size} />
-        }
-
-        const imageEventHandlers = {
+        const clickEventHandlers = {
           'dblclick': this.onDoubleClick,
         }
 
-        let notesOverlay = false
+        const { isVideo: isDownloadVideo, isWebVideo, isFlash, isUgoria } = this.image.files
+        const isVideo = isUgoria || isWebVideo
 
-        if (this.image.hasNotes) {
-          const notes = this.Notes.map(renderNote)
-          notesOverlay = notes &&
-              <section class="notesOverlay" {...{ on: imageEventHandlers}}>
-                {notes}
-              </section>
+        let postBody = null
+
+        if (isFlash) {
+          postBody = <flash-presenter media={this.image} media-click-handlers={clickEventHandlers} preview-url={this.previewUrl} />
+        } else if (isVideo) {
+          postBody = <video-presenter media={this.image} media-click-handlers={clickEventHandlers} preview-url={this.previewUrl} />
+        } else {
+          postBody = <image-presenter media={this.image} media-click-handlers={clickEventHandlers} preview-url={this.previewUrl} />
         }
-
-        const postBody = <div class="post-body">
-          <div class="contentStack"
-               style={{ 'max-width': this.image.size.width + 'px', 'max-height': this.image.size.height + 'px' }}>
-            {notesOverlay || null}
-            <img src={this.previewUrl}
-                 class={{ isLoading: this.isLoading }}
-                 ref="img"
-                 alt="Image!"
-                 {...{ on: imageEventHandlers}}/>
-          </div>
-        </div>
 
         content = <div class="preview">
           {metadata}
@@ -342,22 +348,6 @@
 
         > * {
           grid-area: 1 / 1 / auto / auto;
-        }
-
-        .notesOverlay {
-          z-index: 4;
-          width: 100%;
-          height: 100%;
-          position: relative;
-        }
-
-        img {
-          z-index: 2;
-
-          // TODO: Decide to respect the Preview Image dimensjons, just use the original, or continue like this.
-          object-fit: contain;
-          /*height: 100%;*/ // This causes vivaldi from showing the image... It shrinks it to basically 0px.
-          width: 100%;
         }
       }
 
