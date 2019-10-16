@@ -141,6 +141,7 @@
   .split-view-container {
     display: flex;
     flex-direction: row;
+    height: 100%;
   }
 
   .dragger {

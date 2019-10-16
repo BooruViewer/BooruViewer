@@ -59,5 +59,6 @@
   // This is a quick and dirty hack, i'm sure there is a proper way in vuetify.
   .container {
     max-width: 100% !important;
+    height: 100%;
   }
 </style>

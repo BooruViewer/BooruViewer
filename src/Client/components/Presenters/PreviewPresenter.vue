@@ -277,7 +277,7 @@
 
       return <overlay-scrollbars options={{ overflowBehavior: { x: 'h' }, scrollbars: { autoHide: 'leave' } }}
                                  ref="scroller">
-        <div>
+        <div style={{ 'margin-right': '12.5px' }}>
           {content}
 
           <v-overlay absolute value={this.isSaving}>
