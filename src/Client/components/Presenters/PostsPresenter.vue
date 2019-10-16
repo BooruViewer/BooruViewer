@@ -138,8 +138,8 @@
 
       const posts = this.VisiblePosts.map((post, idx) => {
         const elevations = {
-          'elevation-6': idx === this.activeIdx,
-          'elevation-0': idx !== this.activeIdx,
+          'elevation-6': idx == this.activeIdx,
+          'elevation-0': idx != this.activeIdx,
         }
 
         const tooltipSlots = {
