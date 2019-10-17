@@ -45,7 +45,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { src: '@/plugins/vuex-persistedstate', ssr: false },
+    { src: '@/plugins/vuex-persist', ssr: false },
     "~/plugins/components.js"
   ],
   /*
@@ -69,6 +69,9 @@ export default {
   */
   axios: {
     browserBaseURL: "/",
+  },
+  router: {
+    middleware: 'wait-for-store'
   },
   /*
   ** vuetify module configuration

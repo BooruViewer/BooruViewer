@@ -43,7 +43,17 @@
     }
 
     openQuickSelector() {
-      this.drawerMini = false
+      if (this.drawerMini) {
+        this.drawerMini = false
+
+        const $unwatch = this.$watch("$refs.booruSelector.$refs.selector.isMenuActive", isActive => {
+          if (isActive)
+            return
+          this.drawerMini = true
+          $unwatch()
+        })
+
+      }
       if (this.$refs.booruSelector)
         this.$refs.booruSelector.open()
     }
