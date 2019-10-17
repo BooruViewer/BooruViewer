@@ -22,6 +22,7 @@ namespace BooruViewer.Models.Danbooru
         public String Source { get; set; }
         public String Md5 { get; set; }
 
+        public String TagString { get; set; }
         public String TagStringArtist { get; set; }
         public String TagStringCharacter { get; set; }
         public String TagStringCopyright { get; set; }

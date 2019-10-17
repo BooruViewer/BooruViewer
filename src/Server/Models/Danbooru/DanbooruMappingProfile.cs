@@ -37,6 +37,8 @@ namespace BooruViewer.Models.Danbooru
                     opts => opts.MapFrom(src => src.UpdatedAt))
                 .ForMember(dto => dto.HasNotes,
                     opts => opts.MapFrom(src => src.LastNotedAt.HasValue))
+                .ForMember(dto => dto.HasSound,
+                    opts => opts.MapFrom(src => src.TagString.Contains("video_with_sound") || src.TagString.Contains("flash_with_sound")))
                 .ForMember(dto => dto.Size,
                     opts => opts.MapFrom(src => new SizeDto(src.ImageWidth, src.ImageHeight)))
                 .ForMember(dto => dto.Uploader,

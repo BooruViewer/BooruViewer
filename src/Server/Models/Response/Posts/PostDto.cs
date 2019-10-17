@@ -17,6 +17,7 @@ namespace BooruViewer.Models.Response.Posts
         public Boolean IsDeleted { get; set; }
 
         public Boolean? HasNotes { get; set; }
+        public Boolean HasSound { get; set; }
 
         public String Hash { get; set;  }
 
