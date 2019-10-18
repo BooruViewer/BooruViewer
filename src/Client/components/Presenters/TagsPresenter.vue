@@ -23,9 +23,11 @@
     get humanizeTag() {
       return flow(replace(/_/g, " "),
           replace(/\(/g, "( "),
+          replace(/\//g, "/ "),
           split(" "),
           map(capitalize),
           join(" "),
+          replace(/\/ /g, "/"),
           replace(/\( /g, "("))
     }
 
