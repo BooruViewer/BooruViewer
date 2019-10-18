@@ -98,12 +98,27 @@ namespace BooruViewer.Controllers.Api.Danbooru
         }
 
         [HttpGet("auth")]
-        public override Task<JsonResult> Authenticate(String username, String password)
+        public override async Task<JsonResult> Authenticate(String username, String password)
         {
-            // TODO: Test Username + Password to ensure they work.
-            // Waiting on /profile and /settings endpoints, https://discordapp.com/channels/310432830138089472/310846683376517121/617772741000429704
+            var authHeaderPart = $"{username}:{password}";
+
+            try
+            {
+                var profileData = await this._api.GetProfile(this.GetAuthenticationHeader(authHeaderPart));
+            }
+            catch (ApiException crap)
+            {
+                if (crap.HasContent)
+                {
+                    var content = await crap.GetContentAsAsync<Request>();
+                    Console.WriteLine(content.Message);
+                    Console.WriteLine(String.Join("\n", content.Backtrace));
+                }
+                return this.Json(new ResponseErrorMessage("User login test failed. Unable to access /Profile.json"));
+            }
+
             var expiration = DateTimeOffset.UtcNow.AddDays(7);
-            this.Response.Cookies.Append(this.CookieName, this.DataProtector.Protect($"{username}:{password}"),
+            this.Response.Cookies.Append(this.CookieName, this.DataProtector.Protect(authHeaderPart),
                 new CookieOptions()
                 {
                     Expires = expiration,
@@ -112,7 +127,7 @@ namespace BooruViewer.Controllers.Api.Danbooru
                     Path = "/",
                 });
 
-            return Task.FromResult(this.Json(new ResponseDto<Int64>(true, expiration.ToUnixTimeSeconds())));
+            return this.Json(new ResponseDto<Int64>(true, expiration.ToUnixTimeSeconds()));
         }
 
         [HttpGet("favorites/add/{postId}")]
@@ -192,14 +207,22 @@ namespace BooruViewer.Controllers.Api.Danbooru
             return this.File(await response.ReadAsStreamAsync(), response.Headers.ContentType.MediaType);
         }
 
-        protected virtual String GetAuthenticationHeader()
+        protected virtual String GetAuthenticationHeader(String rawParts = null)
         {
-            if (!this.Request.Cookies.ContainsKey(this.CookieName))
+            if (!this.Request.Cookies.ContainsKey(this.CookieName) && rawParts == null)
                 return null;
 
-            // Fail fast if it exists and doesn't decrypt
-            var danbooruCookie = this.Request.Cookies[this.CookieName];
-            var authData = this.DataProtector.Unprotect(danbooruCookie);
+            var authData = "";
+            if (rawParts != null)
+            {
+                authData = rawParts;
+            }
+            else
+            {
+                // Fail fast if it exists and doesn't decrypt
+                var danbooruCookie = this.Request.Cookies[this.CookieName];
+                authData = this.DataProtector.Unprotect(danbooruCookie);
+            }
 
             String Base64(String data)
             {

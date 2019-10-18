@@ -7,6 +7,7 @@ export const ui = {
     DrawerOpen: "getDrawerOpen",
     DrawerMini: "getDrawerMini",
     TagSearchSelected: "getTagSearchSelected",
+    DialogOpen: "isDialogOpen",
   },
   mutations: {
     PaneWidths: "setPaneWidth",
@@ -19,6 +20,7 @@ export const ui = {
     TagSearchSelected: "setTagSearchSelected",
     RemoveTagSearchSelectedItem: "removeTagSearchSelectedItem",
     AddTagSearchSelectedItem: "addTagSearchSelectedItem",
+    DialogOpen: "setDialogOpen",
   },
   actions: {
     OpenDialog: "openDialog",
@@ -34,9 +36,10 @@ export const state = () => ({
   },
   drawerOpen: true,
   drawerMini: true,
+  dialogs: { auth: false },
   tagSearchText: "",
   tagSearchSelected: [{name: "topless", type: "general"}],
-  blacklist: ["dialogs", "tagSearchText"],
+  blacklist: ["dialogs", "tagSearchText", "dialogs"],
 })
 
 export const getters = {
@@ -44,6 +47,11 @@ export const getters = {
   [ui.getters.DrawerOpen]: s => s.drawerOpen,
   [ui.getters.DrawerMini]: s => s.drawerMini,
   [ui.getters.TagSearchSelected]: s => s.tagSearchSelected,
+  [ui.getters.DialogOpen]: s => {
+    return d => {
+      return s.dialogs[d]
+    }
+  }
 }
 
 export const mutations = {
@@ -70,6 +78,12 @@ export const mutations = {
   },
   [ui.mutations.AddTagSearchSelectedItem](state, item) {
     state.tagSearchSelected.push(item)
+  },
+  [ui.mutations.DialogOpen](state, { dialog, open }) {
+    state.dialogs[dialog] = open
+  },
+  forceOpenAuthDialog(state) {
+    state.dialogs.auth = true
   },
 }
 

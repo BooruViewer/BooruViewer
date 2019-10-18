@@ -1,5 +1,6 @@
 import { api as apis } from "~/store/api"
 import { ui as uis } from "~/store/ui"
+import { auth as auths } from "~/store/auth"
 
 const options = {
   hidePostsWhileLoading: true,
@@ -75,7 +76,7 @@ export const actions = {
     dispatch('api/' + apis.actions.Initialize, null, { root: true })
     const api = rootGetters['api/' + apis.getters.Instance]
 
-    // await dispatch('auth/ensureAuth', null, { root: true })
+    await dispatch('auth/' + auths.EnsureAuth, null, { root: true })
 
     let tags = rootState.route.params.tags
     if (tags === "*")
@@ -98,7 +99,7 @@ export const actions = {
     dispatch('api/' + apis.actions.Initialize, null, { root: true })
     const api = rootGetters['api/' + apis.getters.Instance]
 
-    // await dispatch('auth/ensureAuth', null, { root: true })
+    await dispatch('auth/' + auths.EnsureAuth, null, { root: true })
 
     const id = postId.id || postId.postId || postId
 

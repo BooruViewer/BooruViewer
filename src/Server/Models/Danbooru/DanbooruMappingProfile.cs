@@ -8,7 +8,7 @@ using BooruViewer.Models.Response.Posts;
 
 namespace BooruViewer.Models.Danbooru
 {
-    public class DanbooruMappingProfile : Profile
+    public class DanbooruMappingProfile : AutoMapper.Profile
     {
         public DanbooruMappingProfile()
         {

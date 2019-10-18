@@ -17,6 +17,8 @@ namespace BooruViewer.Refit
         Task RemoveFavorite(UInt64 postId, [Header("Authorization")] String authorization = null); // Expects 204 no content, returns 204 when id isn't favorited.
         [Get("/notes.json")]
         Task<Models.Danbooru.Note[]> GetNotesByIdAsync([AliasAs("search[post_id]")] UInt64 postId, UInt64 limit = 1000, [AliasAs("group_by")] String groupBy = "note");
+        [Get("/profile.json")]
+        Task<Models.Danbooru.Profile> GetProfile([Header("Authorization")] String authorization = null);
         [Get("/{**path}")]
         Task<HttpContent> GetImageAsync(String path);
     }

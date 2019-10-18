@@ -4,11 +4,6 @@ const qsOpts = {
   arrayFormat: "repeat",
 }
 
-export const Endpoints = {
-  'Safe Danbooru': "danbooru/safe",
-  Danbooru: "danbooru",
-}
-
 export class BooruApi {
 
   constructor(endpoint) {
@@ -25,7 +20,6 @@ export class BooruApi {
 
     return fetch(route + '?' + qs.stringify(params, qsOpts))
       .then(res => res.json())
-      .then(res => res.isSuccess && res.data)
   }
 
   getPosts(tags, page, limit) {

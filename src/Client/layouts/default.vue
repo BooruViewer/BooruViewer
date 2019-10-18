@@ -1,9 +1,10 @@
 <script>
   import NavigationPart from "~/components/Parts/NavigationPart"
   import TagSearchPart from "~/components/Parts/TagSearchPart"
+  import Dialogs from "~/components/Dialogs/Dialogs"
 
   export default {
-    components: { NavigationPart, TagSearchPart },
+    components: { NavigationPart, TagSearchPart, Dialogs },
     computed: {
       drawer: {
         get: function() {
@@ -38,6 +39,8 @@
             <nuxt/>
           </v-container>
         </v-content>
+
+        <dialogs />
       </v-app>
     },
   }

@@ -28,6 +28,9 @@
     @Ui.Mutation(ui.mutations.DrawerMini)
     setDrawerMini
 
+    @Ui.Mutation(ui.mutations.DialogOpen)
+    OpenDialog
+
     get drawerMini() {
       return this.isDrawerMini
     }
@@ -59,7 +62,8 @@
     }
 
     onDebug() {
-      this.$store.dispatch("booru/refreshPosts")
+      // this.$store.dispatch("booru/refreshPosts")
+      this.OpenDialog({ dialog: "auth", open: true })
     }
 
     render() {
