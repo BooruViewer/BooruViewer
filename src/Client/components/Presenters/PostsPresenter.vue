@@ -3,12 +3,14 @@
   import { Debounce } from "lodash-decorators"
   import { booru } from "~/store/booru"
   import { ui } from "~/store/ui"
+  import { api } from "~/store/api"
   import TagsPresenter from "~/components/Presenters/TagsPresenter"
   import { unionBy } from "lodash"
 
   const Booru = namespace("booru")
   const Route = namespace("route")
   const Ui = namespace("ui")
+  const Api = namespace("api")
 
   @Component({
     components: { TagsPresenter },
@@ -33,6 +35,9 @@
     TagSearch
     @Ui.Mutation(ui.mutations.TagSearchSelected)
     SetTagSearch
+
+    @Api.Getter(api.getters.Instance)
+    ApiInstance
 
     isLoading = false
     activeIdx = 0
@@ -135,6 +140,7 @@
     }
 
     render() {
+      let root = window.getComputedStyle(document.documentElement)
 
       const posts = this.VisiblePosts.map((post, idx) => {
         const elevations = {
@@ -143,6 +149,10 @@
         }
 
         const tags = post.tags.flatMap(p => p.name)
+        const thumbnailSize = parseInt(root.getPropertyValue("--thumbnail-image-size").substring(-2), 10)
+        const thumbnail = !post.files.isVideo
+            ? `/api/thumbnail?size=${thumbnailSize}&imagePath=${this.ApiInstance.imageRoute}${post.files.preview}`
+            : post.files.thumbnail
 
         const tooltipSlots = {
           activator: ({ on }) => {
@@ -151,7 +161,7 @@
                 data-idx={idx}
                 data-file-ext={post.files.extension}
                 data-tags={tags.join(" ")}>
-              <img src={post.files && post.files.thumbnail}
+              <img src={thumbnail}
                    alt={post.hash}
                    class={{ 'favorite': post.isFavourited }}
                    data-idx={idx}
@@ -207,18 +217,25 @@
 
     height: $imageSize;
     width: $imageSize;
+    margin: $imageMargin;
     // margin: $imageMargin;
 
-    img {
-      object-fit: contain;
-
-      // TODO: Other post states, such as deleted, pending, etc
-      &.favorite {
-        box-shadow: 0px 2px 4px -1px rgba(255, 105, 180, 0.8), 0px 4px 5px 0px rgba(255, 105, 180, 0.6), 0px 1px 10px 0px rgba(255, 105, 180, 0.5) !important;
-      }
-    }
-
     div {
+      margin: 0;
+      padding: 0;
+
+      img {
+        object-fit: cover;
+        object-position: 50% 50%;
+        max-width: $imageSize;
+        max-height: $imageSize;
+
+        // TODO: Other post states, such as deleted, pending, etc
+        &.favorite {
+          box-shadow: 0px 2px 4px -1px rgba(255, 105, 180, 0.8), 0px 4px 5px 0px rgba(255, 105, 180, 0.6), 0px 1px 10px 0px rgba(255, 105, 180, 0.5) !important;
+        }
+      }
+
       &[data-file-ext=".mp4"]::before,
       &[data-file-ext=".swf"]::before,
       &[data-file-ext=".webm"]::before,
