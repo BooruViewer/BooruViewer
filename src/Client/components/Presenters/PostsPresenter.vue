@@ -143,6 +143,11 @@
         }
 
         const tags = post.tags.flatMap(p => p.name)
+        const imageClasses = {
+          'favorite': post.isFavourited,
+          'pending': post.isPending,
+          'deleted': post.isDeleted,
+        }
 
         const tooltipSlots = {
           activator: ({ on }) => {
@@ -153,7 +158,7 @@
                 data-tags={tags.join(" ")}>
               <img src={post.files && post.files.thumbnail}
                    alt={post.hash}
-                   class={{ 'favorite': post.isFavourited }}
+                   class={imageClasses}
                    data-idx={idx}
                    {...{ on }}/>
             </div>
@@ -207,14 +212,23 @@
 
     height: $imageSize;
     width: $imageSize;
-    // margin: $imageMargin;
+    margin: $imageMargin;
 
     img {
-      object-fit: contain;
+      object-fit: cover;
+      max-width: $imageSize;
+      max-height: $imageSize;
 
-      // TODO: Other post states, such as deleted, pending, etc
       &.favorite {
         box-shadow: 0px 2px 4px -1px rgba(255, 105, 180, 0.8), 0px 4px 5px 0px rgba(255, 105, 180, 0.6), 0px 1px 10px 0px rgba(255, 105, 180, 0.5) !important;
+      }
+
+      &.pending {
+        box-shadow: 0px 2px 4px -1px rgba(238, 255, 65, 0.8), 0px 4px 5px 0px rgba(238, 255, 65, 0.6), 0px 1px 10px 0px rgba(238, 255, 65, 0.5);
+      }
+
+      &.deleted {
+        box-shadow: 0px 2px 4px -1px rgba(216, 67, 21, 0.8), 0px 4px 5px 0px rgba(216, 67, 21, 0.6), 0px 1px 10px 0px rgba(0216, 67, 21, 0.5);
       }
     }
 
