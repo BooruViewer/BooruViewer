@@ -2,13 +2,25 @@
   import { Component, namespace, Vue } from "nuxt-property-decorator"
   import BooruSwitcherPart from "~/components/Parts/BooruSwitcherPart"
   import { ui } from "~/store/ui"
+  import { booru } from "~/store/booru"
 
   const Ui = namespace("ui")
+  const Booru = namespace("booru")
+  const Route = namespace("route")
 
   @Component({
-    components: { BooruSwitcherPart }
+    components: { BooruSwitcherPart },
   })
   export default class NavigationPart extends Vue {
+
+    @Route.State(s => s.params.tags)
+    Tags
+
+    @Booru.Action(booru.RelatedTags)
+    GetRelatedTags
+
+    @Booru.Getter(booru.RelatedTags)
+    RelatedTags
 
     @Ui.Getter(ui.getters.DrawerOpen)
     isDrawerOpen
@@ -28,9 +40,6 @@
     @Ui.Mutation(ui.mutations.DrawerMini)
     setDrawerMini
 
-    @Ui.Mutation(ui.mutations.DialogOpen)
-    OpenDialog
-
     get drawerMini() {
       return this.isDrawerMini
     }
@@ -39,10 +48,21 @@
       this.setDrawerMini(mini)
     }
 
+    @Ui.Mutation(ui.mutations.DialogOpen)
+    OpenDialog
+
+    @Ui.Getter(ui.getters.TagSearchSelected)
+    SearchedTags
+
+    isRelatedTagsOpen = false
+
     toggleDrawerMini() {
       this.drawerMini = !this.drawerMini
-      if (this.drawerMini && this.$refs.booruSelector)
-        this.$refs.booruSelector.close()
+      if (this.drawerMini) {
+        if (this.$refs.booruSelector)
+          this.$refs.booruSelector.close()
+        this.isRelatedTagsOpen = false
+      }
     }
 
     openQuickSelector() {
@@ -64,6 +84,38 @@
     onDebug() {
       // this.$store.dispatch("booru/refreshPosts")
       this.OpenDialog({ dialog: "auth", open: true })
+    }
+
+    created() {
+      this.GetRelatedTags(this.SearchedTags.map(t => t.name).join(" "))
+    }
+
+    genRelatedTags() {
+      if (this.RelatedTags.length === 0)
+        return null
+
+      // TODO: Add click handler to tags to search them
+      // TODO: Humanize tag names
+      const tags = this.RelatedTags.map(tag => {
+        return <v-list-item dense>
+          <v-list-item-action />
+          <v-list-item-content>
+            <v-list-item-title class={`tag-type-${tag.type.toLowerCase()}`}>{tag.name}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      })
+
+      return <v-list-group v-model={this.isRelatedTagsOpen}>
+
+        <template slot="activator">
+          <v-list-item-action>RT</v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Related Tags</v-list-item-title>
+          </v-list-item-content>
+        </template>
+
+        {tags}
+      </v-list-group>
     }
 
     render() {
@@ -90,7 +142,7 @@
         <v-list-item onClick={this.openQuickSelector}>
           <v-list-item-action>BS</v-list-item-action>
           <v-list-item-content>
-            <booru-switcher-part ref="booruSelector" />
+            <booru-switcher-part ref="booruSelector"/>
           </v-list-item-content>
         </v-list-item>
 
@@ -103,7 +155,11 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-divider />
+        <v-divider/>
+
+        {this.genRelatedTags()}
+
+        <v-divider/>
 
         <v-list-item onClick={this.onDebug}>
           <v-list-item-action>

@@ -61,6 +61,17 @@ export class BooruApi {
       .then(res => res.json())
   }
 
+  getRelatedTags(tags) {
+    const route = `/api/${this.endpoint}/related-tags`
+
+    const params = {
+      tags,
+    }
+
+    return fetch(route + '?' + qs.stringify(params, qsOpts))
+      .then(res => res.json());
+  }
+
   addFavorite(postId) {
     const route = `/api/${this.endpoint}/favorites/add/${postId}`
 

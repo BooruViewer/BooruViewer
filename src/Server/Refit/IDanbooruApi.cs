@@ -19,6 +19,8 @@ namespace BooruViewer.Refit
         Task<Models.Danbooru.Note[]> GetNotesByIdAsync([AliasAs("search[post_id]")] UInt64 postId, UInt64 limit = 1000, [AliasAs("group_by")] String groupBy = "note");
         [Get("/profile.json")]
         Task<Models.Danbooru.Profile> GetProfile([Header("Authorization")] String authorization = null);
+        [Get("/related_tag.json")]
+        Task<Models.Danbooru.RelatedTags> GetRelatedTags(String query);
         [Get("/{**path}")]
         Task<HttpContent> GetImageAsync(String path);
     }

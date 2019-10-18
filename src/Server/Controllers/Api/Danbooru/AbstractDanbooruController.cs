@@ -97,6 +97,29 @@ namespace BooruViewer.Controllers.Api.Danbooru
             return this.Json(response);
         }
 
+        [HttpGet("related-tags")]
+        public async Task<JsonResult> RelatedTagsAsync(String tags)
+        {
+            try
+            {
+                var relatedTags = await this._api.GetRelatedTags(tags);
+                return this.Json(new ResponseDto<RelatedTagsDto>(true, this._mapper.Map<RelatedTagsDto>(relatedTags)));
+            }
+            catch (ApiException crap)
+            {
+                if (!crap.HasContent)
+                    throw;
+
+                var error = await crap.GetContentAsAsync<Request>();
+
+                return this.Json(new ResponseDto<ResponseErrorMessage>(false,
+                    new ResponseErrorMessage(
+                        $"Proxy request to danbooru failed.{Environment.NewLine}" +
+                        $"Reason: {error.Message}{Environment.NewLine}" +
+                        $"Stacktrace: {String.Join(Environment.NewLine, error.Backtrace)}")));
+            }
+        }
+
         [HttpGet("auth")]
         public override async Task<JsonResult> Authenticate(String username, String password)
         {

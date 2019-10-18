@@ -29,6 +29,8 @@ export const booru = {
     FetchAutocompleteResults: "fetchAutocompleteResults",
     ClearAutocompleteResults: "clearAutocompleteResults",
   },
+  RelatedTags: "relatedTags",
+  ClearRelatedTags: "clearRelatedTags",
 }
 
 export const state = () => ({
@@ -37,6 +39,7 @@ export const state = () => ({
   autocompleteResults: [],
   limit: 100,
   sourceBooru: null,
+  relatedTags: [],
   blacklist: ["*"],
 })
 
@@ -46,6 +49,7 @@ export const getters = {
   [booru.getters.TagSearchResults]: s => s.autocompleteResults,
   [booru.getters.Limit]: s => s.limit,
   [booru.getters.SourceBooru]: s => s.sourceBooru,
+  [booru.RelatedTags]: s => s.relatedTags,
 }
 
 export const mutations = {
@@ -64,6 +68,9 @@ export const mutations = {
   [booru.mutations.SourceBooru](state, val) {
     state.sourceBooru = val
   },
+  [booru.RelatedTags](state, tags) {
+    state.relatedTags = tags
+  }
 }
 
 export const actions = {
@@ -133,6 +140,27 @@ export const actions = {
   },
   [booru.actions.ClearAutocompleteResults]({ commit }) {
     commit(booru.mutations.TagSearchResults, [])
+  },
+  async [booru.RelatedTags](context, tags) {
+    const { commit, rootGetters, dispatch } = context
+
+    commit(booru.RelatedTags, [])
+
+    if (tags === undefined || tags.length === 0)
+      return
+
+    dispatch('api/' + apis.actions.Initialize, null, { root: true })
+    const api = rootGetters['api/' + apis.getters.Instance]
+
+    const res = await api.getRelatedTags(tags)
+    if (res.isSuccess) {
+      commit(booru.RelatedTags, res.data.tags)
+    } else {
+      throw new Error(res.error.message)
+    }
+  },
+  [booru.ClearRelatedTags]({ commit }) {
+    commit(booru.RelatedTags, [])
   },
 }
 
