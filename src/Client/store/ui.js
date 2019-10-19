@@ -27,6 +27,7 @@ export const ui = {
     DialogVisible: "isDialogVisible",
     ToggleDrawer: "toggleDrawer",
   },
+  HorizontalSplitView: "horizontalSplitView",
 }
 
 export const state = () => ({
@@ -36,6 +37,7 @@ export const state = () => ({
   },
   drawerOpen: true,
   drawerMini: true,
+  horizontalSplitView: false,
   dialogs: { auth: false },
   tagSearchText: "",
   tagSearchSelected: [],
@@ -51,7 +53,8 @@ export const getters = {
     return d => {
       return s.dialogs[d]
     }
-  }
+  },
+  [ui.HorizontalSplitView]: s => s.horizontalSplitView,
 }
 
 export const mutations = {
@@ -82,9 +85,14 @@ export const mutations = {
   [ui.mutations.DialogOpen](state, { dialog, open }) {
     state.dialogs[dialog] = open
   },
-  forceOpenAuthDialog(state) {
-    state.dialogs.auth = true
-  },
+  [ui.HorizontalSplitView](state, isHorizontal) {
+    state.horizontalSplitView = isHorizontal
+    if (isHorizontal) {
+      state.paneWidths.right = state.paneWidths.left = '50vh'
+    } else {
+      state.paneWidths.right = state.paneWidths.left = '50vw'
+    }
+  }
 }
 
 export const actions = {

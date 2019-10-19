@@ -102,6 +102,7 @@
     onDebug() {
       // this.$store.dispatch("booru/refreshPosts")
       this.OpenDialog({ dialog: "auth", open: true })
+      this.$store.commit('ui/horizontalSplitView', !this.$store.getters['ui/horizontalSplitView'])
     }
 
     ensureDrawerIsntMini() {
