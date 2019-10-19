@@ -1,5 +1,6 @@
 <script>
-  import { Component, Watch, Vue, namespace, Getter } from "nuxt-property-decorator"
+  import { Component, Watch, mixins, namespace } from "nuxt-property-decorator"
+  import HumanizeTagMixin from "~/mixins/HumanizeTagMixin"
   import { booru } from "~/store/booru"
   import { ui } from "~/store/ui"
   import { debounce } from "lodash"
@@ -9,7 +10,7 @@
   const Route = namespace("route")
 
   @Component
-  export default class TagSearchPart extends Vue {
+  export default class TagSearchPart extends mixins(HumanizeTagMixin) {
 
     @Route.State(s => s.params.page)
     Page
@@ -238,7 +239,7 @@
                 close
                 onClick={data.select}
                 {...{ on: { 'click:close': this.closeChip(data.item) } }}>
-              <span>{data.item.name || data.item}</span>
+              <span>{this.TagHumanizer(data.item.name) || data.item}</span>
             </v-chip>,
       }
 

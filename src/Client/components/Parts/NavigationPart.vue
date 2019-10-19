@@ -3,6 +3,7 @@
   import AuthenticatedAwareMixin from "~/mixins/AuthenticatedAwareMixin"
   import SearchTagsMixin from "~/mixins/SearchTagsMixin"
   import BooruSwitcherPart from "~/components/Parts/BooruSwitcherPart"
+  import HumanizeTagMixin from "~/mixins/HumanizeTagMixin"
   import { ui } from "~/store/ui"
   import { booru } from "~/store/booru"
   import { SiteFeatures } from "~/assets/site-configs"
@@ -14,7 +15,7 @@
   @Component({
     components: { BooruSwitcherPart },
   })
-  export default class NavigationPart extends mixins(AuthenticatedAwareMixin, SearchTagsMixin) {
+  export default class NavigationPart extends mixins(AuthenticatedAwareMixin, SearchTagsMixin, HumanizeTagMixin) {
 
     @Route.State(s => s.params.tags)
     Tags
@@ -116,7 +117,7 @@
         return <v-list-item onClick={this.onRelatedTagClicked(tag)} dense>
           <v-list-item-action />
           <v-list-item-content>
-            <v-list-item-title class={`tag-type-${tag.type.toLowerCase()}`}>{tag.name}</v-list-item-title>
+            <v-list-item-title class={`tag-type-${tag.type.toLowerCase()}`}>{this.TagHumanizer(tag.name)}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       })
@@ -150,7 +151,7 @@
         return <v-list-item onClick={this.onSavedSearchClicked(search)} dense>
           <v-list-item-action />
           <v-list-item-content>
-            <v-list-item-title class={`tag-type-general`}>{search.label}</v-list-item-title>
+            <v-list-item-title class={`tag-type-general`}>{this.TagHumanizer(search.label)}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       })
