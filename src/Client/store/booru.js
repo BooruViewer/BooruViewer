@@ -76,12 +76,14 @@ export const mutations = {
     state.relatedTags = tags
   },
   [booru.AddFavorite](state, postId) {
-    state.posts.find(p => p.id === postId)
-      .isFavourited = true
+    const post = state.posts.find(p => p.id === postId)
+    post.isFavourited = true
+    post.favourites += 1
   },
   [booru.RemoveFavorite](state, postId) {
-    state.posts.find(p => p.id === postId)
-      .isFavourited = false
+    const post = state.posts.find(p => p.id === postId)
+    post.isFavourited = false
+    post.favourites -= 1
   },
   [booru.SavedSearches](state, searches) {
     state.savedSearches = searches
