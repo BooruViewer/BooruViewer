@@ -2,11 +2,11 @@ using System;
 
 namespace BooruViewer.Models
 {
-    public class ResponseErrorMessage : ResponseDto<String>
+    public class ResponseErrorMessage
     {
         public String Message { get; }
 
-        public ResponseErrorMessage(String message) : base(false, message)
+        public ResponseErrorMessage(String message)
         {
             this.Message = message;
         }
