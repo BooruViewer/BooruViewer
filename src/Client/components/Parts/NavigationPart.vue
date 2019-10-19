@@ -142,7 +142,7 @@
         return null
 
       const searches = this.SavedSearches.map(search => {
-        return <v-list-item data-query={search.query} onClick={this.onSavedSearchClicked(search)} dense>
+        return <v-list-item onClick={this.onSavedSearchClicked(search)} dense>
           <v-list-item-action />
           <v-list-item-content>
             <v-list-item-title class={`tag-type-general`}>{search.label}</v-list-item-title>
