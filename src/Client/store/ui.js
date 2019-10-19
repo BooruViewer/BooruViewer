@@ -38,7 +38,7 @@ export const state = () => ({
   drawerMini: true,
   dialogs: { auth: false },
   tagSearchText: "",
-  tagSearchSelected: [{name: "topless", type: "general"}],
+  tagSearchSelected: [],
   blacklist: ["dialogs", "tagSearchText", "dialogs"],
 })
 
