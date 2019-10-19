@@ -74,6 +74,7 @@
                                 label={this.currentLayout.id}
                                 hint={this.currentLayout.idHint}
                                 required
+                                persistent-hint
                                 clearable/>
                 </v-col>
               </v-row>
@@ -83,6 +84,7 @@
                                 label={this.currentLayout.key}
                                 hint={this.currentLayout.keyHint}
                                 required
+                                persistent-hint
                                 clearable/>
                 </v-col>
               </v-row>
