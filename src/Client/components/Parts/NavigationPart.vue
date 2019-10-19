@@ -1,6 +1,7 @@
 <script>
   import { Component, Watch, namespace, mixins } from "nuxt-property-decorator"
   import AuthenticatedAwareMixin from "~/mixins/AuthenticatedAwareMixin"
+  import SearchTagsMixin from "~/mixins/SearchTagsMixin"
   import BooruSwitcherPart from "~/components/Parts/BooruSwitcherPart"
   import { ui } from "~/store/ui"
   import { booru } from "~/store/booru"
@@ -13,7 +14,7 @@
   @Component({
     components: { BooruSwitcherPart },
   })
-  export default class NavigationPart extends mixins(AuthenticatedAwareMixin) {
+  export default class NavigationPart extends mixins(AuthenticatedAwareMixin, SearchTagsMixin) {
 
     @Route.State(s => s.params.tags)
     Tags
@@ -141,7 +142,7 @@
         return null
 
       const searches = this.SavedSearches.map(search => {
-        return <v-list-item dense>
+        return <v-list-item data-query={search.query} onClick={this.onSavedSearchClicked(search)} dense>
           <v-list-item-action />
           <v-list-item-content>
             <v-list-item-title class={`tag-type-general`}>{search.label}</v-list-item-title>
@@ -149,7 +150,7 @@
         </v-list-item>
       })
 
-      return <v-list-group onClick={this.ensureDrawerIsntMini} v-model={this.isSavedSearchesOpen}>
+      return <v-list-group v-model={this.isSavedSearchesOpen}>
 
         <template slot="activator">
           <v-list-item-action>SS</v-list-item-action>
@@ -160,6 +161,12 @@
 
         {searches}
       </v-list-group>
+    }
+
+    onSavedSearchClicked(tag) {
+      return e => {
+        this.SearchTags(tag.query)
+      }
     }
 
     created() {
