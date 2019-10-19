@@ -1,5 +1,5 @@
 <script>
-  import { Component, namespace, Vue } from "nuxt-property-decorator"
+  import { Component, Watch, namespace, Vue } from "nuxt-property-decorator"
   import BooruSwitcherPart from "~/components/Parts/BooruSwitcherPart"
   import { ui } from "~/store/ui"
   import { booru } from "~/store/booru"
@@ -54,6 +54,14 @@
     @Ui.Getter(ui.getters.TagSearchSelected)
     SearchedTags
 
+    @Watch("SearchedTags")
+    onSearchedTagsChanged(tags, previous) {
+      const tagString = tags.map(t => t.name).join(" ")
+      const previousTagString = previous.map(t => t.name).join(" ")
+      if (tagString !== previousTagString)
+        this.GetRelatedTags(tagString)
+    }
+
     isRelatedTagsOpen = false
 
     toggleDrawerMini() {
@@ -84,10 +92,6 @@
     onDebug() {
       // this.$store.dispatch("booru/refreshPosts")
       this.OpenDialog({ dialog: "auth", open: true })
-    }
-
-    created() {
-      this.GetRelatedTags(this.SearchedTags.map(t => t.name).join(" "))
     }
 
     genRelatedTags() {
