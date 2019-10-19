@@ -61,7 +61,7 @@
 
     render(h) {
       return <div style="height: 100%;">
-        <split-view onResized={this.onResized}>
+        <split-view onResized={this.onResized} min-width={20} max-width={80} default-width="50vw">
           <template slot="left-content">
             <div class="pane" style={{ width: this.PaneWidths.left, 'min-width': '20vw' }}>
               <posts-presenter onPostSelected={this.onPostSelected} />

@@ -1,9 +1,18 @@
 <script>
-  import { Vue, Component } from "nuxt-property-decorator"
+  import { Vue, Component, Prop } from "nuxt-property-decorator"
   import _ from "lodash"
 
   @Component
   export default class SplitView extends Vue {
+
+    @Prop(Number)
+    minWidth
+
+    @Prop(Number)
+    maxWidth
+
+    @Prop(String)
+    defaultWidth
 
     onDoubleClick(e) {
       const { target: resizer } = e;
@@ -15,9 +24,9 @@
       const leftPane = resizer.previousElementSibling;
       const rightPane = resizer.nextElementSibling;
 
-      leftPane.style.width = rightPane.style.width = "50vw";
+      leftPane.style.width = rightPane.style.width = this.defaultWidth;
 
-      this.$emit('resized', { leftWidth: '50vw', rightWidth: '50vw' })
+      this.$emit('resized', { leftWidth: this.defaultWidth, rightWidth: this.defaultWidth })
     }
 
     onMouseDown(e) {
@@ -38,20 +47,23 @@
         offsetWidth: initialRightPaneWidth,
       } = rightPane
 
+      const { min, max } = Math
       const { addEventListener, removeEventListener } = window;
 
       const resize2 = (inputPane, initialSize, offset = 0) => {
         const containerWidth = container.clientWidth;
         const paneWidth = initialSize + offset;
 
+        const newWidth = max(this.minWidth, min(this.maxWidth, paneWidth / containerWidth * 100))
+        const restWidth = max(this.minWidth, min(this.maxWidth, 100 - (paneWidth / containerWidth * 100)))
+
         // inputPane.style.width = paneWidth + 'px'
-        inputPane.style.width = paneWidth / containerWidth * 100 + '%'
-        return 100 - (paneWidth / containerWidth * 100)
+        inputPane.style.width = newWidth + '%'
+        return restWidth + '%'
       }
 
       const onMouseMove = ({ pageX }) => {
-        let rest = resize2(rightPane, initialRightPaneWidth, -(pageX - initialPageX))
-        leftPane.style.width = rest + '%'
+        leftPane.style.width = resize2(rightPane, initialRightPaneWidth, -(pageX - initialPageX))
       }
 
       const onMouseMoveT = _.throttle(onMouseMove, 16)
@@ -88,20 +100,23 @@
         offsetWidth: initialRightPaneWidth,
       } = rightPane
 
+      const { min, max } = Math
       const { addEventListener, removeEventListener } = window;
 
       const resize2 = (inputPane, initialSize, offset = 0) => {
         const containerWidth = container.clientWidth;
         const paneWidth = initialSize + offset;
 
+        const newWidth = max(this.minWidth, min(this.maxWidth, paneWidth / containerWidth * 100))
+        const restWidth = max(this.minWidth, min(this.maxWidth, 100 - (paneWidth / containerWidth * 100)))
+
         // inputPane.style.width = paneWidth + 'px'
-        inputPane.style.width = paneWidth / containerWidth * 100 + '%'
-        return 100 - (paneWidth / containerWidth * 100)
+        inputPane.style.width = newWidth + '%'
+        return restWidth + '%'
       }
 
       const onTouchMove = ({ pageX }) => {
-        let rest = resize2(rightPane, initialRightPaneWidth, -(pageX - initialPageX))
-        leftPane.style.width = rest + '%'
+        leftPane.style.width = resize2(rightPane, initialRightPaneWidth, -(pageX - initialPageX))
       }
 
       const onTouchMoveT = _.throttle(onTouchMove)
