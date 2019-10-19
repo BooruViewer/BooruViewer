@@ -216,6 +216,22 @@ namespace BooruViewer.Controllers.Api.Danbooru
             }
         }
 
+        [HttpGet("saved-searches")]
+        public async Task<JsonResult> GetSavedSearches()
+        {
+            try
+            {
+                var savedSeaches = await this._api.GetSavedSearches(this.GetAuthenticationHeader());
+                return this.Json(new ResponseDto<SavedSearchesDto[]>(true, this._mapper.Map<SavedSearchesDto[]>(savedSeaches)));
+            }
+            catch (ApiException)
+            {
+                return this.Json(new ResponseDto<ResponseErrorMessage>(false, new ResponseErrorMessage(
+                    $"Proxy request to danbooru failed.{Environment.NewLine}" +
+                    $"Reason: Unexpected ApiException Occured.")));
+            }
+        }
+
         [HttpGet("image/{parts}")]
         public override async Task<FileResult> ImageAsync(String parts)
         {

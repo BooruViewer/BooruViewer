@@ -32,6 +32,7 @@ export const booru = {
   RelatedTags: "relatedTags",
   AddFavorite: "addFavorite",
   RemoveFavorite: "removeFavorite",
+  SavedSearches: "savedSearches",
 }
 
 export const state = () => ({
@@ -40,7 +41,8 @@ export const state = () => ({
   autocompleteResults: [],
   limit: 100,
   sourceBooru: null,
-  relatedTags: [],
+  relatedTags: [], // string
+  savedSearches: [], // label: string, query: string
   blacklist: ["*"],
 })
 
@@ -51,6 +53,7 @@ export const getters = {
   [booru.getters.Limit]: s => s.limit,
   [booru.getters.SourceBooru]: s => s.sourceBooru,
   [booru.RelatedTags]: s => s.relatedTags,
+  [booru.SavedSearches]: s => s.savedSearches,
 }
 
 export const mutations = {
@@ -79,6 +82,9 @@ export const mutations = {
   [booru.RemoveFavorite](state, postId) {
     state.posts.find(p => p.id === postId)
       .isFavourited = false
+  },
+  [booru.SavedSearches](state, searches) {
+    state.savedSearches = searches
   },
 }
 
@@ -194,6 +200,43 @@ export const actions = {
     const res = await api.removeFavorite(postId)
     if (res.isSuccess) {
       commit(booru.RemoveFavorite, postId)
+    } else {
+      throw new Error(res.error.message)
+    }
+  },
+  async [booru.SavedSearches](context) {
+    const { state, commit, rootGetters, rootState, dispatch } = context
+
+    if (options.hidePostsWhileLoading)
+      commit(booru.SavedSearches, [])
+
+    dispatch('api/' + apis.actions.Initialize, null, { root: true })
+    const api = rootGetters['api/' + apis.getters.Instance]
+
+    await dispatch('auth/' + auths.EnsureAuth, null, { root: true })
+
+    const res = await api.getSavedSearches()
+    if (res.isSuccess) {
+      const all = {
+        label: "all",
+        query: "search:all",
+      }
+
+      const labels = [...new Set(res.data.flatMap(s => s.labels))]
+      const sortedLabelObjs = labels.sort((left, right) => {
+        if (left < right)
+          return -1
+        if (left > right)
+          return 1
+        return 0
+      }).map(label => ({
+        label,
+        query: `search:${label}`,
+      }))
+
+      const savedSearches = [all, ...sortedLabelObjs]
+
+      commit(booru.SavedSearches, savedSearches)
     } else {
       throw new Error(res.error.message)
     }

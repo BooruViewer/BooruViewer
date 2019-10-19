@@ -8,6 +8,15 @@ export const Endpoints = {
   [Sites[1]]: "danbooru",
 }
 
+export const SiteFeatures = {
+  [Sites[0]]: {
+    hasSavedSearches: true,
+  },
+  [Sites[1]]: {
+    hasSavedSearches: true,
+  },
+}
+
 export const AuthDialogConfigs = {
   [Sites[0]]: {
     title: "Safe Danbooru Login",
@@ -30,5 +39,6 @@ export const AuthDialogConfigs = {
 export default {
   Sites,
   Endpoints,
+  SiteFeatures,
   AuthDialogConfigs,
 }

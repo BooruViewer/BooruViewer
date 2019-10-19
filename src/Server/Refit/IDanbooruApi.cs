@@ -21,6 +21,8 @@ namespace BooruViewer.Refit
         Task<Models.Danbooru.Profile> GetProfile([Header("Authorization")] String authorization = null);
         [Get("/related_tag.json")]
         Task<Models.Danbooru.RelatedTags> GetRelatedTags(String query);
+        [Get("/saved_searches.json?limit=1000")]
+        Task<Models.Danbooru.SavedSearches[]> GetSavedSearches([Header("Authorization")] String authorization = null);
         [Get("/{**path}")]
         Task<HttpContent> GetImageAsync(String path);
     }

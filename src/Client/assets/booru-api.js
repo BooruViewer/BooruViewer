@@ -79,6 +79,17 @@ export class BooruApi {
       .then(res => res.json());
   }
 
+  getSavedSearches() {
+    const route = `/api/${this.endpoint}/saved-searches`
+
+    const params = {
+
+    }
+
+    return fetch(route + '?' + qs.stringify(params, qsOpts))
+      .then(res => res.json())
+  }
+
   removeFavorite(postId) {
     const route = `/api/${this.endpoint}/favorites/remove/${postId}`
 

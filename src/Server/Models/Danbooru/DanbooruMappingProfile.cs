@@ -58,6 +58,8 @@ namespace BooruViewer.Models.Danbooru
             this.CreateMap<RelatedTags, RelatedTagsDto>()
                 .ForMember(dto => dto.Tags,
                     opts => opts.ConvertUsing(new AbortionArrayOfArrayOfStringAndIntConverter(tagType2TagTypesConverter), src => src));
+
+            this.CreateMap<SavedSearches, SavedSearchesDto>();
         }
 
         private class AbortionArrayOfArrayOfStringAndIntConverter : IValueConverter<RelatedTags, ICollection<TagDto>>

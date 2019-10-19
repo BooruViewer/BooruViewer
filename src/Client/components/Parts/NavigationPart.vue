@@ -1,8 +1,10 @@
 <script>
-  import { Component, Watch, namespace, Vue } from "nuxt-property-decorator"
+  import { Component, Watch, namespace, mixins } from "nuxt-property-decorator"
+  import AuthenticatedAwareMixin from "~/mixins/AuthenticatedAwareMixin"
   import BooruSwitcherPart from "~/components/Parts/BooruSwitcherPart"
   import { ui } from "~/store/ui"
   import { booru } from "~/store/booru"
+  import { SiteFeatures } from "~/assets/site-configs"
 
   const Ui = namespace("ui")
   const Booru = namespace("booru")
@@ -11,16 +13,20 @@
   @Component({
     components: { BooruSwitcherPart },
   })
-  export default class NavigationPart extends Vue {
+  export default class NavigationPart extends mixins(AuthenticatedAwareMixin) {
 
     @Route.State(s => s.params.tags)
     Tags
 
     @Booru.Action(booru.RelatedTags)
     GetRelatedTags
-
     @Booru.Getter(booru.RelatedTags)
     RelatedTags
+
+    @Booru.Action(booru.SavedSearches)
+    GetSavedSearches
+    @Booru.Getter(booru.SavedSearches)
+    SavedSearches
 
     @Ui.Getter(ui.getters.DrawerOpen)
     isDrawerOpen
@@ -63,6 +69,7 @@
     }
 
     isRelatedTagsOpen = false
+    isSavedSearchesOpen = false
 
     toggleDrawerMini() {
       this.drawerMini = !this.drawerMini
@@ -70,6 +77,7 @@
         if (this.$refs.booruSelector)
           this.$refs.booruSelector.close()
         this.isRelatedTagsOpen = false
+        this.isSavedSearchesOpen = false
       }
     }
 
@@ -92,6 +100,10 @@
     onDebug() {
       // this.$store.dispatch("booru/refreshPosts")
       this.OpenDialog({ dialog: "auth", open: true })
+    }
+
+    ensureDrawerIsntMini() {
+      this.drawerMini = false
     }
 
     genRelatedTags() {
@@ -120,6 +132,38 @@
 
         {tags}
       </v-list-group>
+    }
+
+    genSavedSearches() {
+      if (!SiteFeatures[this.CurrentSite].hasSavedSearches)
+        return null
+      if (!this.IsAuthenticated(this.CurrentSite))
+        return null
+
+      const searches = this.SavedSearches.map(search => {
+        return <v-list-item dense>
+          <v-list-item-action />
+          <v-list-item-content>
+            <v-list-item-title class={`tag-type-general`}>{search.label}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      })
+
+      return <v-list-group onClick={this.ensureDrawerIsntMini} v-model={this.isSavedSearchesOpen}>
+
+        <template slot="activator">
+          <v-list-item-action>SS</v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Saved Searches</v-list-item-title>
+          </v-list-item-content>
+        </template>
+
+        {searches}
+      </v-list-group>
+    }
+
+    created() {
+      this.GetSavedSearches();
     }
 
     render() {
@@ -162,6 +206,8 @@
         <v-divider/>
 
         {this.genRelatedTags()}
+
+        {this.genSavedSearches()}
 
         <v-divider/>
 
