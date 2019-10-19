@@ -82,63 +82,9 @@
       addEventListener('mouseup', onMouseUp)
     }
 
-    onTouchStart(e) {
-      const { target: resizer, pageX: initialPageX, pageY: initialPageY } = e;
-      if (!(resizer.className && resizer.className.match('dragger')))
-        return;
-
-      e.preventDefault()
-
-      const container = this.$el;
-      const leftPane = resizer.previousElementSibling
-      const rightPane = resizer.nextElementSibling
-
-      const {
-        offsetWidth: initialLeftPaneWidth,
-      } = leftPane
-      const {
-        offsetWidth: initialRightPaneWidth,
-      } = rightPane
-
-      const { min, max } = Math
-      const { addEventListener, removeEventListener } = window;
-
-      const resize2 = (inputPane, initialSize, offset = 0) => {
-        const containerWidth = container.clientWidth;
-        const paneWidth = initialSize + offset;
-
-        const newWidth = max(this.minWidth, min(this.maxWidth, paneWidth / containerWidth * 100))
-        const restWidth = max(this.minWidth, min(this.maxWidth, 100 - (paneWidth / containerWidth * 100)))
-
-        // inputPane.style.width = paneWidth + 'px'
-        inputPane.style.width = newWidth + '%'
-        return restWidth + '%'
-      }
-
-      const onTouchMove = ({ pageX }) => {
-        leftPane.style.width = resize2(rightPane, initialRightPaneWidth, -(pageX - initialPageX))
-      }
-
-      const onTouchMoveT = _.throttle(onTouchMove)
-
-      const onTouchEnd = () => {
-        const leftWidth = leftPane.style.width
-        const rightWidth = rightPane.style.width
-
-        this.$emit('resized', { leftWidth, rightWidth })
-
-        removeEventListener('touchmove', onMouseMoveT)
-        removeEventListener('touchend', onMouseUp)
-      }
-
-      addEventListener('touchmove', onTouchMoveT)
-      addEventListener('touchend', onTouchEnd)
-    }
-
     render(h) {
       const defaultSlot = this.$slots.default ||
-          <div class="dragger" ref="resizeEl" onDblclick={this.onDoubleClick} onMousedown={this.onMouseDown}
-               onTouchstart={this.onTouchStart}>
+          <div class="dragger" ref="resizeEl" onDblclick={this.onDoubleClick} onMousedown={this.onMouseDown}>
             <v-divider vertical/>
           </div>
 
