@@ -111,10 +111,9 @@
       if (this.RelatedTags.length === 0)
         return null
 
-      // TODO: Add click handler to tags to search them
       // TODO: Humanize tag names
       const tags = this.RelatedTags.map(tag => {
-        return <v-list-item dense>
+        return <v-list-item onClick={this.onRelatedTagClicked(tag)} dense>
           <v-list-item-action />
           <v-list-item-content>
             <v-list-item-title class={`tag-type-${tag.type.toLowerCase()}`}>{tag.name}</v-list-item-title>
@@ -133,6 +132,12 @@
 
         {tags}
       </v-list-group>
+    }
+
+    onRelatedTagClicked(tag) {
+      return e => {
+        this.SearchTags(tag.name)
+      }
     }
 
     genSavedSearches() {
