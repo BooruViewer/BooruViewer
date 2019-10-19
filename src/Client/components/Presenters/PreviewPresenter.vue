@@ -5,9 +5,11 @@
   import saveAs from "file-saver"
   import { booru } from "~/store/booru"
   import { api } from "~/store/api"
+  import { auth } from "~/store/auth"
 
   const Booru = namespace("booru")
   const Api = namespace("api")
+  const Auth = namespace("auth")
 
   // Example post for notes. Contains lots of notes, of various sizes and locations.
   // https://danbooru.donmai.us/posts/784834
@@ -27,8 +29,19 @@
     @Booru.Action(booru.actions.ClearNotes)
     ClearNotes
 
+    @Booru.Action(booru.AddFavorite)
+    AddFavorite
+    @Booru.Action(booru.RemoveFavorite)
+    RemoveFavorite
+
     @Api.Getter(api.getters.Instance)
     ApiInstance
+
+    @Api.Getter(api.getters.CurrentEndpoint)
+    CurrentSite
+
+    @Auth.Getter(auth.Auth)
+    IsAuthenticated
 
     @Prop(Object)
     image
@@ -93,6 +106,14 @@
 
       // Trigger the download, and when it finishes the load event.
       this.imageLoader.src = this.ApiInstance.imageRoute + this.image.files.preview
+    }
+
+    toggleFavorite() {
+      if (!this.IsAuthenticated(this.CurrentSite))
+        return
+      if (this.image.isFavourited)
+        this.RemoveFavorite(this.image.id)
+      else this.AddFavorite(this.image.id)
     }
 
     _scrollToTop() {
@@ -165,19 +186,19 @@
 
       let content = null
       if (this.image) {
-        const filledHeart = <v-icon small>mdi-heart</v-icon>
-        const hollowHeart = <v-icon small>mdi-heart-outline</v-icon>
+        const filledHeart = <v-icon small onClick={this.toggleFavorite}>mdi-heart</v-icon>
+        const hollowHeart = <v-icon small onClick={this.toggleFavorite}>mdi-heart-outline</v-icon>
         const postScores =
             <span class="post-scores">
               <h1>Score&nbsp;</h1>
-              <span class="fav-count">
+              <span class="fav-count" >
                 {this.image.favourites}&nbsp;
                 {this.image.isFavourited ? filledHeart : hollowHeart}&nbsp;
               </span>
             </span>
 
-        const thumbsUp = <v-icon small>mdi-thumb-up-outline</v-icon>
-        const thumbsDown = <v-icon small>mdi-thumb-down</v-icon>
+        const thumbsUp = <v-icon small>{this.image.isFavourited ? 'mdi-thumb-up' : 'mdi-thumb-up-outline'}</v-icon>
+        const thumbsDown = <v-icon small>mdi-thumb-down-outline</v-icon>
         const score =
             <span class="score">
               {this.image.score}&nbsp;

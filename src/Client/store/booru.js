@@ -30,7 +30,8 @@ export const booru = {
     ClearAutocompleteResults: "clearAutocompleteResults",
   },
   RelatedTags: "relatedTags",
-  ClearRelatedTags: "clearRelatedTags",
+  AddFavorite: "addFavorite",
+  RemoveFavorite: "removeFavorite",
 }
 
 export const state = () => ({
@@ -70,7 +71,15 @@ export const mutations = {
   },
   [booru.RelatedTags](state, tags) {
     state.relatedTags = tags
-  }
+  },
+  [booru.AddFavorite](state, postId) {
+    state.posts.find(p => p.id === postId)
+      .isFavourited = true
+  },
+  [booru.RemoveFavorite](state, postId) {
+    state.posts.find(p => p.id === postId)
+      .isFavourited = false
+  },
 }
 
 export const actions = {
@@ -159,10 +168,34 @@ export const actions = {
       throw new Error(res.error.message)
     }
   },
-  [booru.ClearRelatedTags]({ commit }) {
-    commit(booru.RelatedTags, [])
+  async [booru.AddFavorite](context, postId) {
+    const { commit, rootGetters, dispatch } = context
+
+    dispatch('api/' + apis.actions.Initialize, null, { root: true })
+    const api = rootGetters['api/' + apis.getters.Instance]
+
+    await dispatch('auth/' + auths.EnsureAuth, null, { root: true })
+
+    const res = await api.addFavorite(postId)
+    if (res.isSuccess) {
+      commit(booru.AddFavorite, postId)
+    } else {
+      throw new Error(res.error.message)
+    }
+  },
+  async [booru.RemoveFavorite](context, postId) {
+    const { commit, rootGetters, dispatch } = context
+
+    dispatch('api/' + apis.actions.Initialize, null, { root: true })
+    const api = rootGetters['api/' + apis.getters.Instance]
+
+    await dispatch('auth/' + auths.EnsureAuth, null, { root: true })
+
+    const res = await api.removeFavorite(postId)
+    if (res.isSuccess) {
+      commit(booru.RemoveFavorite, postId)
+    } else {
+      throw new Error(res.error.message)
+    }
   },
 }
-
-
-
