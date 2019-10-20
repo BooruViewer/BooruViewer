@@ -98,10 +98,11 @@
       }
 
       const onMouseUp = () => {
-        const leftWidth = firstPane.style.width
-        const rightWidth = lastPane.style.width
+        const prop = this.horizontal ? "height" : "width"
+        const firstSize = firstPane.style[prop]
+        const lastSize = lastPane.style[prop]
 
-        this.$emit('resized', { leftWidth, rightWidth })
+        this.$emit('resized', { leftWidth: firstSize, rightWidth: lastSize })
         this.isResizing = false
 
         removeEventListener('mousemove', onMouseMoveT)
