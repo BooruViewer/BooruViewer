@@ -1,5 +1,7 @@
+using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -11,8 +13,9 @@ namespace BooruViewer
         {
             var host = CreateHostBuilder(args).Build();
 
+            var conf = host.Services.GetService<IConfiguration>();
             var env = host.Services.GetService<IWebHostEnvironment>();
-            if (!env.IsDevelopment())
+            if (!env.IsDevelopment() && String.IsNullOrEmpty(conf["electron"]))
             {
                 var startSettings = new ProcessStartInfo("http://localhost:5000")
                     {UseShellExecute = true,};
