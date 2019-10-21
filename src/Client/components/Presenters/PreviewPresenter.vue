@@ -273,7 +273,7 @@
         } else if (isVideo) {
           postBody = <video-presenter media={this.image} media-click-handlers={clickEventHandlers} preview-url={this.previewUrl} />
         } else {
-          postBody = <image-presenter media={this.image} media-click-handlers={clickEventHandlers} preview-url={this.previewUrl} />
+          postBody = <image-presenter media={this.image} media-click-handlers={clickEventHandlers} preview-url={this.previewUrl} is-loading={this.isLoading} />
         }
 
         content = <div class="preview">
