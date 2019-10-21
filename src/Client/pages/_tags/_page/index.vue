@@ -10,7 +10,7 @@
 
   @Component({
     components: {
-      SplitView, PostsPresenter, PreviewPresenter
+      SplitView, PostsPresenter, PreviewPresenter,
     },
   })
   export default class Index extends Vue {
@@ -20,6 +20,9 @@
 
     @Ui.Getter(ui.getters.PaneWidths)
     PaneWidths
+
+    @Ui.Getter(ui.HorizontalSplitView)
+    SplitViewHorizontal
 
     @Ui.Mutation(ui.mutations.PaneWidths)
     SetPaneWidths
@@ -60,16 +63,33 @@
     }
 
     render(h) {
+      const firstPaneStyle = {
+        width: !this.SplitViewHorizontal ? this.PaneWidths.left : null,
+        height: this.SplitViewHorizontal ? this.PaneWidths.left : null,
+        'min-width': !this.SplitViewHorizontal ? "20vw" : null,
+        'min-height': this.SplitViewHorizontal ? "20vh" : null,
+      }
+      const lastPaneStyle = {
+        width: !this.SplitViewHorizontal ? this.PaneWidths.right : null,
+        height: this.SplitViewHorizontal ? this.PaneWidths.right : null,
+        'min-width': !this.SplitViewHorizontal ? "20vw" : null,
+        'min-height': this.SplitViewHorizontal ? "20vh" : null,
+      }
+
+      const minHeight = this.SplitViewHorizontal ? 33 : 20
+      const maxHeight = this.SplitViewHorizontal ? 66 : 80
+
       return <div style="height: 100%;">
-        <split-view onResized={this.onResized} min-width={20} max-width={80} default-width="50vw">
+        <split-view onResized={this.onResized} min-width={minHeight} max-width={maxHeight} default-width="50vw" default-height="50vh"
+                    horizontal={this.SplitViewHorizontal}>
           <template slot="left-content">
-            <div class="pane" style={{ width: this.PaneWidths.left, 'min-width': '20vw' }}>
-              <posts-presenter onPostSelected={this.onPostSelected} />
+            <div class="pane" style={firstPaneStyle}>
+              <posts-presenter onPostSelected={this.onPostSelected}/>
             </div>
           </template>
           <template slot="right-content">
-            <div class="pane" style={{ width: this.PaneWidths.right, 'min-width': '20vw' }}>
-              <preview-presenter image={this.image} />
+            <div class="pane" style={lastPaneStyle}>
+              <preview-presenter image={this.image}/>
             </div>
           </template>
         </split-view>
