@@ -116,6 +116,8 @@
     }
 
     onSearchChanged(e) {
+      this.searchText = null
+
       let workingItem = e[e.length - 1]
       if (this.isDelimitorString) {
         this.RemoveSelectedTag(workingItem)
@@ -143,10 +145,6 @@
     }
 
     doNavigate() {
-      // if (parseInt(this.Page) === 1) {
-      //   this.RefreshPosts();
-      // }
-
       // DO NOT NAVIGATE WITH STRINGS IN THE SELECTED TAGS
       if (this.selectedTags.find(t => typeof t === "string")) {
         console.error('[TagSearchPart] One of the Selected Tags is not structured properly.')
