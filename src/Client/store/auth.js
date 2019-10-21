@@ -11,8 +11,19 @@ export const auth = {
   WhichBooru: "whichBooru",
 }
 
+const initialStates = {}
+Sites.map(site => {
+  initialStates[site] = {
+    loggedIn: false,
+    id: null,
+    key: null,
+    expires: null,
+  }
+})
+
 export const state = () => ({
   whichBooru: Sites[0],
+  ...initialStates,
   blacklist: ["*"],
 })
 
@@ -32,7 +43,7 @@ export const mutations = {
     }
   },
   [auth.RemoveAuth](state, { currentSite }) {
-    state[currentSite] = null
+    state[currentSite] = initialStates[currentSite]
   },
   [auth.WhichBooru](state, booru) {
     state.whichBooru = booru

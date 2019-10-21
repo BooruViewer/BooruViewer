@@ -41,6 +41,44 @@ const blacklistReducer = state => {
   return filtered
 }
 
+const blacklistReducer2 = state => {
+  console.log('[VueX/Persist] Blacklist Reducer v2 running.')
+
+  const filtered = {}
+
+  for (const key in state) {
+    if (key === "route")
+      continue
+
+    if (state.hasOwnProperty(key)) {
+
+      if (!state[key]["blacklist"]) {
+        filtered[key] = state[key]
+        continue
+      }
+
+      const blacklist = state[key]["blacklist"]
+      if (blacklist[0] === "*")
+        continue
+
+      filtered[key] = {}
+      for (const subKey in state[key]) {
+        if (subKey === "blacklist")
+          continue
+
+        if (blacklist.includes(subKey))
+          continue
+
+        filtered[key][subKey] = state[key][subKey]
+      }
+
+    }
+
+  }
+
+  return filtered
+}
+
 const customSaveState = (key, state, storage) => {
   const modules = []
 
@@ -91,7 +129,7 @@ const persistence = new VuexPersistence({
   storage: localforage,
   asyncStorage: true,
   strictMode: true,
-  reducer: blacklistReducer,
+  reducer: blacklistReducer2,
   restoreState: customRestoreState,
   saveState: customSaveState,
 })

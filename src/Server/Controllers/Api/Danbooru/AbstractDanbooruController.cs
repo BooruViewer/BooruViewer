@@ -137,7 +137,10 @@ namespace BooruViewer.Controllers.Api.Danbooru
                     Console.WriteLine(content.Message);
                     Console.WriteLine(String.Join("\n", content.Backtrace));
                 }
-                return this.Json(new ResponseErrorMessage("User login test failed. Unable to access /Profile.json"));
+
+                // This failed... Make sure the cookie doesn't exist!
+                this.Response.Cookies.Delete(this.CookieName);
+                return this.Json(new ResponseDto<ResponseErrorMessage>(false, new ResponseErrorMessage("User login test failed. Unable to access /Profile.json")));
             }
 
             var expiration = DateTimeOffset.UtcNow.AddDays(7);
