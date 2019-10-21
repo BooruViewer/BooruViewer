@@ -1,9 +1,49 @@
 <script>
-  import { Vue, Component } from "nuxt-property-decorator"
+  import { Vue, Component, Prop } from "nuxt-property-decorator"
   import _ from "lodash"
 
   @Component
   export default class SplitView extends Vue {
+
+    @Prop(Number)
+    minWidth
+
+    @Prop(Number)
+    maxWidth
+
+    @Prop(String)
+    defaultWidth
+    @Prop(String)
+    defaultHeight
+
+    @Prop(Boolean)
+    horizontal
+
+    isResizing
+
+    _resizeVertical(inputPane, initialSize, offset = 0) {
+      const { min, max } = Math
+      const containerWidth = this.$el.clientWidth;
+      const paneWidth = initialSize + offset;
+
+      const newWidth = max(this.minWidth, min(this.maxWidth, paneWidth / containerWidth * 100))
+      const restWidth = max(this.minWidth, min(this.maxWidth, 100 - (paneWidth / containerWidth * 100)))
+
+      inputPane.style.width = newWidth + '%'
+      return restWidth + '%'
+    }
+
+    _resizeHorizontal(inputPane, initialSize, offset = 0) {
+      const { min, max } = Math
+      const containerHeight = this.$el.clientHeight
+      const paneHeight = initialSize + offset
+
+      const newHeight = max(this.minWidth, min(this.maxWidth, paneHeight / containerHeight * 100))
+      const restHeight = max(this.minWidth, min(this.maxWidth, 100 - (paneHeight / containerHeight * 100)))
+
+      inputPane.style.height = newHeight + '%'
+      return restHeight + '%'
+    }
 
     onDoubleClick(e) {
       const { target: resizer } = e;
@@ -15,119 +55,97 @@
       const leftPane = resizer.previousElementSibling;
       const rightPane = resizer.nextElementSibling;
 
-      leftPane.style.width = rightPane.style.width = "50vw";
+      let val
 
-      this.$emit('resized', { leftWidth: '50vw', rightWidth: '50vw' })
+      if (this.horizontal) {
+        val = leftPane.style.height = rightPane.style.height = this.defaultHeight;
+      } else {
+        val = leftPane.style.width = rightPane.style.width = this.defaultWidth;
+      }
+
+      this.$emit('resized', { leftWidth: val, rightWidth: val })
     }
 
     onMouseDown(e) {
       const { target: resizer, pageX: initialPageX, pageY: initialPageY } = e;
       if (!(resizer.className && resizer.className.match('dragger')))
         return;
+      if (resizer.parentElement !== this.$el)
+        return
 
       e.preventDefault()
 
-      const container = this.$el;
-      const leftPane = resizer.previousElementSibling
-      const rightPane = resizer.nextElementSibling
+      const firstPane = resizer.previousElementSibling
+      const lastPane = resizer.nextElementSibling
 
       const {
         offsetWidth: initialLeftPaneWidth,
-      } = leftPane
+        offsetHeight: initialFirstPaneHeight,
+      } = firstPane
       const {
-        offsetWidth: initialRightPaneWidth,
-      } = rightPane
+        offsetWidth: initialLastPaneWidth,
+        offsetHeight: initialLastPaneHeight,
+      } = lastPane
 
       const { addEventListener, removeEventListener } = window;
 
-      const resize2 = (inputPane, initialSize, offset = 0) => {
-        const containerWidth = container.clientWidth;
-        const paneWidth = initialSize + offset;
-
-        // inputPane.style.width = paneWidth + 'px'
-        inputPane.style.width = paneWidth / containerWidth * 100 + '%'
-        return 100 - (paneWidth / containerWidth * 100)
+      const onMouseMove = ({ pageX, pageY }) => {
+        if (this.horizontal) {
+          firstPane.style.height = this._resizeHorizontal(lastPane, initialLastPaneHeight, -(pageY - initialPageY))
+        } else {
+          firstPane.style.width = this._resizeVertical(lastPane, initialLastPaneWidth, -(pageX - initialPageX))
+        }
       }
-
-      const onMouseMove = ({ pageX }) => {
-        let rest = resize2(rightPane, initialRightPaneWidth, -(pageX - initialPageX))
-        leftPane.style.width = rest + '%'
-      }
-
-      const onMouseMoveT = _.throttle(onMouseMove, 16)
 
       const onMouseUp = () => {
-        const leftWidth = leftPane.style.width
-        const rightWidth = rightPane.style.width
+        const prop = this.horizontal ? "height" : "width"
+        const firstSize = firstPane.style[prop]
+        const lastSize = lastPane.style[prop]
 
-        this.$emit('resized', { leftWidth, rightWidth })
+        this.$emit('resized', { leftWidth: firstSize, rightWidth: lastSize })
+        this.isResizing = false
 
         removeEventListener('mousemove', onMouseMoveT)
         removeEventListener('mouseup', onMouseUp)
       }
 
+      const onMouseMoveT = _.throttle(onMouseMove, 16)
+
+      this.isResizing = true
+
       addEventListener('mousemove', onMouseMoveT)
       addEventListener('mouseup', onMouseUp)
     }
 
-    onTouchStart(e) {
-      const { target: resizer, pageX: initialPageX, pageY: initialPageY } = e;
-      if (!(resizer.className && resizer.className.match('dragger')))
-        return;
-
-      e.preventDefault()
-
-      const container = this.$el;
-      const leftPane = resizer.previousElementSibling
-      const rightPane = resizer.nextElementSibling
-
-      const {
-        offsetWidth: initialLeftPaneWidth,
-      } = leftPane
-      const {
-        offsetWidth: initialRightPaneWidth,
-      } = rightPane
-
-      const { addEventListener, removeEventListener } = window;
-
-      const resize2 = (inputPane, initialSize, offset = 0) => {
-        const containerWidth = container.clientWidth;
-        const paneWidth = initialSize + offset;
-
-        // inputPane.style.width = paneWidth + 'px'
-        inputPane.style.width = paneWidth / containerWidth * 100 + '%'
-        return 100 - (paneWidth / containerWidth * 100)
+    genDefaultDragger() {
+      const on = {
+        dblclick: this.onDoubleClick,
+        mousedown: this.onMouseDown,
       }
 
-      const onTouchMove = ({ pageX }) => {
-        let rest = resize2(rightPane, initialRightPaneWidth, -(pageX - initialPageX))
-        leftPane.style.width = rest + '%'
-      }
-
-      const onTouchMoveT = _.throttle(onTouchMove)
-
-      const onTouchEnd = () => {
-        const leftWidth = leftPane.style.width
-        const rightWidth = rightPane.style.width
-
-        this.$emit('resized', { leftWidth, rightWidth })
-
-        removeEventListener('touchmove', onMouseMoveT)
-        removeEventListener('touchend', onMouseUp)
-      }
-
-      addEventListener('touchmove', onTouchMoveT)
-      addEventListener('touchend', onTouchEnd)
+      if (!this.horizontal)
+        return <div class={['dragger', {
+          vertical: !this.horizontal,
+          horizontal: this.horizontal,
+        }]} ref="resizeEl" {...{ on }}>
+          <v-divider vertical/>
+        </div>
+      return <div class={['dragger', {
+        vertical: !this.horizontal,
+        horizontal: this.horizontal,
+      }]} ref="resizeEl" {...{ on }}>
+        <v-divider/>
+      </div>
     }
 
     render(h) {
-      const defaultSlot = this.$slots.default ||
-          <div class="dragger" ref="resizeEl" onDblclick={this.onDoubleClick} onMousedown={this.onMouseDown}
-               onTouchstart={this.onTouchStart}>
-            <v-divider vertical/>
-          </div>
+      const defaultSlot = this.$slots.default || this.genDefaultDragger()
 
-      return <div class="split-view-container">
+      return <div class={['split-view-container', {
+        isResizing: this.isResizing,
+        vertical: !this.horizontal,
+        horizontal: this.horizontal,
+      }]}>
         {this.$slots['left-content']}
         {defaultSlot}
         {this.$slots['right-content']}
@@ -137,19 +155,36 @@
   }
 </script>
 
-<style>
+<style lang="scss">
   .split-view-container {
     display: flex;
-    flex-direction: row;
     height: 100%;
-  }
 
-  .dragger {
-    width: .5vw;
+    .dragger {
+      margin: .25vw;
+      padding: .5vh;
 
-    margin: .25vw;
-    padding: .5vh;
+      &.vertical {
+        width: .5vw;
+        cursor: col-resize;
+      }
 
-    cursor: col-resize;
+      &.horizontal {
+        height: .5vh;
+        cursor: row-resize;
+      }
+    }
+
+    &.isResizing {
+      user-select: none;
+    }
+
+    &.vertical {
+      flex-direction: row;
+    }
+
+    &.horizontal {
+      flex-direction: column;
+    }
   }
 </style>

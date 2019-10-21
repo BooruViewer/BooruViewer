@@ -1,4 +1,5 @@
-import { BooruApi, Endpoints } from "../assets/booru-api"
+import { BooruApi } from "~/assets/booru-api"
+import { Sites, Endpoints } from "~/assets/site-configs"
 
 export const api = {
   getters: {
@@ -23,7 +24,7 @@ export const state = () => ({
 export const getters = {
   [api.getters.Instance]: s => s.booru,
   [api.getters.CurrentEndpoint]: s => s.currentEndpoint,
-  [api.getters.AllEndpoints]: s => Object.keys(Endpoints)
+  [api.getters.AllEndpoints]: s => Sites,
 }
 
 export const mutations = {

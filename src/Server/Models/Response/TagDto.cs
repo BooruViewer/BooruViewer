@@ -1,8 +1,6 @@
 using System;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
 
-namespace BooruViewer.Models.Response.Posts
+namespace BooruViewer.Models.Response
 {
     public class TagDto
     {

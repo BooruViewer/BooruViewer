@@ -97,13 +97,54 @@ namespace BooruViewer.Controllers.Api.Danbooru
             return this.Json(response);
         }
 
-        [HttpGet("auth")]
-        public override Task<JsonResult> Authenticate(String username, String password)
+        [HttpGet("related-tags")]
+        public async Task<JsonResult> RelatedTagsAsync(String tags)
         {
-            // TODO: Test Username + Password to ensure they work.
-            // Waiting on /profile and /settings endpoints, https://discordapp.com/channels/310432830138089472/310846683376517121/617772741000429704
+            try
+            {
+                var relatedTags = await this._api.GetRelatedTags(tags);
+                return this.Json(new ResponseDto<RelatedTagsDto>(true, this._mapper.Map<RelatedTagsDto>(relatedTags)));
+            }
+            catch (ApiException crap)
+            {
+                if (!crap.HasContent)
+                    throw;
+
+                var error = await crap.GetContentAsAsync<Request>();
+
+                return this.Json(new ResponseDto<ResponseErrorMessage>(false,
+                    new ResponseErrorMessage(
+                        $"Proxy request to danbooru failed.{Environment.NewLine}" +
+                        $"Reason: {error.Message}{Environment.NewLine}" +
+                        $"Stacktrace: {String.Join(Environment.NewLine, error.Backtrace)}")));
+            }
+        }
+
+        [HttpGet("auth")]
+        public override async Task<JsonResult> Authenticate(String username, String password)
+        {
+            var authHeaderPart = $"{username}:{password}";
+
+            try
+            {
+                var profileData = await this._api.GetProfile(this.GetAuthenticationHeader(authHeaderPart));
+            }
+            catch (ApiException crap)
+            {
+                if (crap.HasContent)
+                {
+                    var content = await crap.GetContentAsAsync<Request>();
+                    Console.WriteLine(content.Message);
+                    Console.WriteLine(String.Join("\n", content.Backtrace));
+                }
+
+                // This failed... Make sure the cookie doesn't exist!
+                this.Response.Cookies.Delete(this.CookieName);
+                return this.Json(new ResponseDto<ResponseErrorMessage>(false, new ResponseErrorMessage("User login test failed. Unable to access /Profile.json")));
+            }
+
             var expiration = DateTimeOffset.UtcNow.AddDays(7);
-            this.Response.Cookies.Append(this.CookieName, this.DataProtector.Protect($"{username}:{password}"),
+            this.Response.Cookies.Append(this.CookieName, this.DataProtector.Protect(authHeaderPart),
                 new CookieOptions()
                 {
                     Expires = expiration,
@@ -112,7 +153,7 @@ namespace BooruViewer.Controllers.Api.Danbooru
                     Path = "/",
                 });
 
-            return Task.FromResult(this.Json(new ResponseDto<Int64>(true, expiration.ToUnixTimeSeconds())));
+            return this.Json(new ResponseDto<Int64>(true, expiration.ToUnixTimeSeconds()));
         }
 
         [HttpGet("favorites/add/{postId}")]
@@ -178,6 +219,22 @@ namespace BooruViewer.Controllers.Api.Danbooru
             }
         }
 
+        [HttpGet("saved-searches")]
+        public async Task<JsonResult> GetSavedSearches()
+        {
+            try
+            {
+                var savedSeaches = await this._api.GetSavedSearches(this.GetAuthenticationHeader());
+                return this.Json(new ResponseDto<SavedSearchesDto[]>(true, this._mapper.Map<SavedSearchesDto[]>(savedSeaches)));
+            }
+            catch (ApiException)
+            {
+                return this.Json(new ResponseDto<ResponseErrorMessage>(false, new ResponseErrorMessage(
+                    $"Proxy request to danbooru failed.{Environment.NewLine}" +
+                    $"Reason: Unexpected ApiException Occured.")));
+            }
+        }
+
         [HttpGet("image/{parts}")]
         public override async Task<FileResult> ImageAsync(String parts)
         {
@@ -192,14 +249,22 @@ namespace BooruViewer.Controllers.Api.Danbooru
             return this.File(await response.ReadAsStreamAsync(), response.Headers.ContentType.MediaType);
         }
 
-        protected virtual String GetAuthenticationHeader()
+        protected virtual String GetAuthenticationHeader(String rawParts = null)
         {
-            if (!this.Request.Cookies.ContainsKey(this.CookieName))
+            if (!this.Request.Cookies.ContainsKey(this.CookieName) && rawParts == null)
                 return null;
 
-            // Fail fast if it exists and doesn't decrypt
-            var danbooruCookie = this.Request.Cookies[this.CookieName];
-            var authData = this.DataProtector.Unprotect(danbooruCookie);
+            var authData = "";
+            if (rawParts != null)
+            {
+                authData = rawParts;
+            }
+            else
+            {
+                // Fail fast if it exists and doesn't decrypt
+                var danbooruCookie = this.Request.Cookies[this.CookieName];
+                authData = this.DataProtector.Unprotect(danbooruCookie);
+            }
 
             String Base64(String data)
             {

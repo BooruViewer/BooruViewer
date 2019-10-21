@@ -1,5 +1,6 @@
 <script>
-  import { Component, Watch, Vue, namespace, Getter } from "nuxt-property-decorator"
+  import { Component, Watch, mixins, namespace } from "nuxt-property-decorator"
+  import HumanizeTagMixin from "~/mixins/HumanizeTagMixin"
   import { booru } from "~/store/booru"
   import { ui } from "~/store/ui"
   import { debounce } from "lodash"
@@ -9,7 +10,7 @@
   const Route = namespace("route")
 
   @Component
-  export default class TagSearchPart extends Vue {
+  export default class TagSearchPart extends mixins(HumanizeTagMixin) {
 
     @Route.State(s => s.params.page)
     Page
@@ -115,6 +116,8 @@
     }
 
     onSearchChanged(e) {
+      this.searchText = null
+
       let workingItem = e[e.length - 1]
       if (this.isDelimitorString) {
         this.RemoveSelectedTag(workingItem)
@@ -142,10 +145,6 @@
     }
 
     doNavigate() {
-      // if (parseInt(this.Page) === 1) {
-      //   this.RefreshPosts();
-      // }
-
       // DO NOT NAVIGATE WITH STRINGS IN THE SELECTED TAGS
       if (this.selectedTags.find(t => typeof t === "string")) {
         console.error('[TagSearchPart] One of the Selected Tags is not structured properly.')
@@ -238,7 +237,7 @@
                 close
                 onClick={data.select}
                 {...{ on: { 'click:close': this.closeChip(data.item) } }}>
-              <span>{data.item.name || data.item}</span>
+              <span>{this.TagHumanizer(data.item.name) || data.item}</span>
             </v-chip>,
       }
 

@@ -1,14 +1,34 @@
 <script>
-  import { Component, namespace, Vue } from "nuxt-property-decorator"
+  import { Component, Watch, namespace, mixins } from "nuxt-property-decorator"
+  import AuthenticatedAwareMixin from "~/mixins/AuthenticatedAwareMixin"
+  import SearchTagsMixin from "~/mixins/SearchTagsMixin"
   import BooruSwitcherPart from "~/components/Parts/BooruSwitcherPart"
+  import HumanizeTagMixin from "~/mixins/HumanizeTagMixin"
   import { ui } from "~/store/ui"
+  import { booru } from "~/store/booru"
+  import { SiteFeatures } from "~/assets/site-configs"
 
   const Ui = namespace("ui")
+  const Booru = namespace("booru")
+  const Route = namespace("route")
 
   @Component({
-    components: { BooruSwitcherPart }
+    components: { BooruSwitcherPart },
   })
-  export default class NavigationPart extends Vue {
+  export default class NavigationPart extends mixins(AuthenticatedAwareMixin, SearchTagsMixin, HumanizeTagMixin) {
+
+    @Route.State(s => s.params.tags)
+    Tags
+
+    @Booru.Action(booru.RelatedTags)
+    GetRelatedTags
+    @Booru.Getter(booru.RelatedTags)
+    RelatedTags
+
+    @Booru.Action(booru.SavedSearches)
+    GetSavedSearches
+    @Booru.Getter(booru.SavedSearches)
+    SavedSearches
 
     @Ui.Getter(ui.getters.DrawerOpen)
     isDrawerOpen
@@ -36,10 +56,31 @@
       this.setDrawerMini(mini)
     }
 
+    @Ui.Mutation(ui.mutations.DialogOpen)
+    OpenDialog
+
+    @Ui.Getter(ui.getters.TagSearchSelected)
+    SearchedTags
+
+    @Watch("SearchedTags")
+    onSearchedTagsChanged(tags, previous) {
+      const tagString = tags.map(t => t.name).join(" ")
+      const previousTagString = previous.map(t => t.name).join(" ")
+      if (tagString !== previousTagString)
+        this.GetRelatedTags(tagString)
+    }
+
+    isRelatedTagsOpen = false
+    isSavedSearchesOpen = false
+
     toggleDrawerMini() {
       this.drawerMini = !this.drawerMini
-      if (this.drawerMini && this.$refs.booruSelector)
-        this.$refs.booruSelector.close()
+      if (this.drawerMini) {
+        if (this.$refs.booruSelector)
+          this.$refs.booruSelector.close()
+        this.isRelatedTagsOpen = false
+        this.isSavedSearchesOpen = false
+      }
     }
 
     openQuickSelector() {
@@ -60,6 +101,85 @@
 
     onDebug() {
       this.$store.dispatch("booru/refreshPosts")
+    }
+
+    ensureDrawerIsntMini() {
+      this.drawerMini = false
+    }
+
+    genRelatedTags() {
+      if (this.RelatedTags.length === 0)
+        return null
+
+      // TODO: Humanize tag names
+      const tags = this.RelatedTags.map(tag => {
+        return <v-list-item onClick={this.onRelatedTagClicked(tag)} dense>
+          <v-list-item-action />
+          <v-list-item-content>
+            <v-list-item-title class={`tag-type-${tag.type.toLowerCase()}`}>{this.TagHumanizer(tag.name)}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      })
+
+      return <v-list-group v-model={this.isRelatedTagsOpen}>
+
+        <template slot="activator">
+          <v-list-item-action>RT</v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Related Tags</v-list-item-title>
+          </v-list-item-content>
+        </template>
+
+        {tags}
+      </v-list-group>
+    }
+
+    onRelatedTagClicked(tag) {
+      return e => {
+        this.SearchTags(tag.name)
+      }
+    }
+
+    genSavedSearches() {
+      if (!SiteFeatures[this.CurrentSite].hasSavedSearches)
+        return null
+      if (!this.IsAuthenticated(this.CurrentSite))
+        return null
+
+      const searches = this.SavedSearches.map(search => {
+        return <v-list-item onClick={this.onSavedSearchClicked(search)} dense>
+          <v-list-item-action />
+          <v-list-item-content>
+            <v-list-item-title class={`tag-type-general`}>{this.TagHumanizer(search.label)}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      })
+
+      return <v-list-group v-model={this.isSavedSearchesOpen}>
+
+        <template slot="activator">
+          <v-list-item-action>SS</v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Saved Searches</v-list-item-title>
+          </v-list-item-content>
+        </template>
+
+        {searches}
+      </v-list-group>
+    }
+
+    onSavedSearchClicked(tag) {
+      return e => {
+        this.SearchTags(tag.query)
+      }
+    }
+
+    onSettingsClicked() {
+      this.OpenDialog({ dialog: "settings", open: true })
+    }
+
+    created() {
+      this.GetSavedSearches();
     }
 
     render() {
@@ -86,11 +206,11 @@
         <v-list-item onClick={this.openQuickSelector}>
           <v-list-item-action>BS</v-list-item-action>
           <v-list-item-content>
-            <booru-switcher-part ref="booruSelector" />
+            <booru-switcher-part ref="booruSelector"/>
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item>
+        <v-list-item onClick={this.onSettingsClicked}>
           <v-list-item-action>
             <v-icon>mdi-settings</v-icon>
           </v-list-item-action>
@@ -99,7 +219,13 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-divider />
+        <v-divider/>
+
+        {this.genRelatedTags()}
+
+        {this.genSavedSearches()}
+
+        <v-divider/>
 
         <v-list-item onClick={this.onDebug}>
           <v-list-item-action>

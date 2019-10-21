@@ -6,7 +6,7 @@
   const Booru = namespace("booru")
 
   @Component({
-    NotePresenter
+    components: { NotePresenter }
   })
   export default class ImagePresenter extends Vue {
 
@@ -18,6 +18,9 @@
 
     @Prop(String)
     previewUrl
+
+    @Prop(Boolean)
+    isLoading
 
     @Booru.Getter(booru.getters.Notes)
     Notes
@@ -44,6 +47,7 @@
              style={{ 'max-width': this.media.size.width + 'px', 'max-height': this.media.size.height + 'px' }}>
           {notesOverlay || null}
           <img src={this.previewUrl}
+               class={[{isLoading: this.isLoading}]}
                ref="img"
                alt="Image!"
                {...{ on: this.mediaClickHandlers}}/>
@@ -72,6 +76,10 @@
       object-fit: contain;
       /*height: 100%;*/ // This causes vivaldi from showing the image... It shrinks it to basically 0px.
       width: 100%;
+
+      &.isLoading {
+        filter: blur(4px) grayscale(.66);
+      }
     }
 
   }

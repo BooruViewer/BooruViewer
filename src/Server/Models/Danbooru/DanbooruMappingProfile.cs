@@ -8,10 +8,12 @@ using BooruViewer.Models.Response.Posts;
 
 namespace BooruViewer.Models.Danbooru
 {
-    public class DanbooruMappingProfile : Profile
+    public class DanbooruMappingProfile : AutoMapper.Profile
     {
         public DanbooruMappingProfile()
         {
+            var tagType2TagTypesConverter = new TagTypeToTagTypesValueConverter();
+
             this.CreateMap<Post, PostDto>()
                 .ForMember(dto => dto.ChildIds,
                     opts => opts.ConvertUsing(new IdCollectionFromStringValueConverter(), src => src.ChildrenIds))
@@ -49,9 +51,39 @@ namespace BooruViewer.Models.Danbooru
                 .ForMember(dto => dto.Count,
                     opts => opts.MapFrom(src => src.PostCount))
                 .ForMember(dto => dto.Type,
-                    opts => opts.ConvertUsing(new TagTypeToTagTypesValueConverter(), src => src.Type));
+                    opts => opts.ConvertUsing(tagType2TagTypesConverter, src => src.Type));
 
             this.CreateMap<Note, NoteDto>();
+
+            this.CreateMap<RelatedTags, RelatedTagsDto>()
+                .ForMember(dto => dto.Tags,
+                    opts => opts.ConvertUsing(new AbortionArrayOfArrayOfStringAndIntConverter(tagType2TagTypesConverter), src => src));
+
+            this.CreateMap<SavedSearches, SavedSearchesDto>();
+        }
+
+        private class AbortionArrayOfArrayOfStringAndIntConverter : IValueConverter<RelatedTags, ICollection<TagDto>>
+        {
+            private TagTypeToTagTypesValueConverter _tagTypeConverter;
+
+            public AbortionArrayOfArrayOfStringAndIntConverter(TagTypeToTagTypesValueConverter tagTypeConverter)
+            {
+                this._tagTypeConverter = tagTypeConverter;
+            }
+
+            public ICollection<TagDto> Convert(RelatedTags sourceMember, ResolutionContext context)
+            {
+                var items = sourceMember.Tags.Select(t => (name: t[0] as String, type: t[1] as Int64?));
+                var results = new List<TagDto>();
+
+                foreach (var (name, type) in items)
+                {
+                    var tagType = (TagType) type.Value;
+                    results.Add(new TagDto(name, this._tagTypeConverter.Convert(tagType, null)));
+                }
+
+                return results;
+            }
         }
 
         private class SourceDtoFromPostValueConverter : IValueConverter<Post, SourceDto>

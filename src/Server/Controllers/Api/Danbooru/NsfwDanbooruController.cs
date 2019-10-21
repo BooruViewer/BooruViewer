@@ -5,6 +5,7 @@ using BooruViewer.Models.Response;
 using BooruViewer.Refit;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 
 namespace BooruViewer.Controllers.Api.Danbooru
 {
@@ -15,10 +16,10 @@ namespace BooruViewer.Controllers.Api.Danbooru
         protected override String CookieName { get; }
         protected override String BaseDomain { get; }
 
-        public NsfwDanbooruController(IDanbooruApi api, IMapper mapper, IDataProtectionProvider dataProtectorProvider) : base(api, mapper, dataProtectorProvider)
+        public NsfwDanbooruController(IDanbooruApi api, IMapper mapper, IDataProtectionProvider dataProtectorProvider, IHostEnvironment env) : base(api, mapper, dataProtectorProvider)
         {
             this.SourceBooru = new SourceBooru("danbooru", "Danbooru", "https://danbooru.donmai.us/");
-            this.CookieName = "Danbooru";
+            this.CookieName = $"Danbooru-{env.EnvironmentName}";
             this.BaseDomain = "donmai.us";
         }
     }

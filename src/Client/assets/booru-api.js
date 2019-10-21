@@ -4,11 +4,6 @@ const qsOpts = {
   arrayFormat: "repeat",
 }
 
-export const Endpoints = {
-  'Safe Danbooru': "danbooru/safe",
-  Danbooru: "danbooru",
-}
-
 export class BooruApi {
 
   constructor(endpoint) {
@@ -25,7 +20,6 @@ export class BooruApi {
 
     return fetch(route + '?' + qs.stringify(params, qsOpts))
       .then(res => res.json())
-      .then(res => res.isSuccess && res.data)
   }
 
   getPosts(tags, page, limit) {
@@ -67,11 +61,33 @@ export class BooruApi {
       .then(res => res.json())
   }
 
+  getRelatedTags(tags) {
+    const route = `/api/${this.endpoint}/related-tags`
+
+    const params = {
+      tags,
+    }
+
+    return fetch(route + '?' + qs.stringify(params, qsOpts))
+      .then(res => res.json());
+  }
+
   addFavorite(postId) {
     const route = `/api/${this.endpoint}/favorites/add/${postId}`
 
     return fetch(route)
       .then(res => res.json());
+  }
+
+  getSavedSearches() {
+    const route = `/api/${this.endpoint}/saved-searches`
+
+    const params = {
+
+    }
+
+    return fetch(route + '?' + qs.stringify(params, qsOpts))
+      .then(res => res.json())
   }
 
   removeFavorite(postId) {

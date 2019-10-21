@@ -1,9 +1,10 @@
 <script>
   import NavigationPart from "~/components/Parts/NavigationPart"
   import TagSearchPart from "~/components/Parts/TagSearchPart"
+  import Dialogs from "~/components/Dialogs/Dialogs"
 
   export default {
-    components: { NavigationPart, TagSearchPart },
+    components: { NavigationPart, TagSearchPart, Dialogs },
     computed: {
       drawer: {
         get: function() {
@@ -38,6 +39,8 @@
             <nuxt/>
           </v-container>
         </v-content>
+
+        <dialogs />
       </v-app>
     },
   }
@@ -58,7 +61,11 @@
   // We want the content to extend the full width
   // This is a quick and dirty hack, i'm sure there is a proper way in vuetify.
   .container {
-    max-width: 100% !important;
+    max-width: 100vw !important;
     height: 100%;
+  }
+
+  .v-content {
+    max-height: 100vh !important;
   }
 </style>

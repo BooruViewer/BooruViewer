@@ -7,6 +7,7 @@ export const ui = {
     DrawerOpen: "getDrawerOpen",
     DrawerMini: "getDrawerMini",
     TagSearchSelected: "getTagSearchSelected",
+    DialogOpen: "isDialogOpen",
   },
   mutations: {
     PaneWidths: "setPaneWidth",
@@ -19,12 +20,14 @@ export const ui = {
     TagSearchSelected: "setTagSearchSelected",
     RemoveTagSearchSelectedItem: "removeTagSearchSelectedItem",
     AddTagSearchSelectedItem: "addTagSearchSelectedItem",
+    DialogOpen: "setDialogOpen",
   },
   actions: {
     OpenDialog: "openDialog",
     DialogVisible: "isDialogVisible",
     ToggleDrawer: "toggleDrawer",
   },
+  HorizontalSplitView: "horizontalSplitView",
 }
 
 export const state = () => ({
@@ -34,9 +37,11 @@ export const state = () => ({
   },
   drawerOpen: true,
   drawerMini: true,
+  horizontalSplitView: false,
+  dialogs: { auth: false, settings: false },
   tagSearchText: "",
-  tagSearchSelected: [{name: "topless", type: "general"}],
-  blacklist: ["dialogs", "tagSearchText"],
+  tagSearchSelected: [],
+  blacklist: ["dialogs", "tagSearchText", "dialogs"],
 })
 
 export const getters = {
@@ -44,6 +49,12 @@ export const getters = {
   [ui.getters.DrawerOpen]: s => s.drawerOpen,
   [ui.getters.DrawerMini]: s => s.drawerMini,
   [ui.getters.TagSearchSelected]: s => s.tagSearchSelected,
+  [ui.getters.DialogOpen]: s => {
+    return d => {
+      return s.dialogs[d]
+    }
+  },
+  [ui.HorizontalSplitView]: s => s.horizontalSplitView,
 }
 
 export const mutations = {
@@ -71,6 +82,17 @@ export const mutations = {
   [ui.mutations.AddTagSearchSelectedItem](state, item) {
     state.tagSearchSelected.push(item)
   },
+  [ui.mutations.DialogOpen](state, { dialog, open }) {
+    state.dialogs[dialog] = open
+  },
+  [ui.HorizontalSplitView](state, isHorizontal) {
+    state.horizontalSplitView = isHorizontal
+    if (isHorizontal) {
+      state.paneWidths.right = state.paneWidths.left = '50vh'
+    } else {
+      state.paneWidths.right = state.paneWidths.left = '50vw'
+    }
+  }
 }
 
 export const actions = {

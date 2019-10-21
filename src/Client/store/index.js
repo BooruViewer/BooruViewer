@@ -1,7 +1,7 @@
 import createLogger from 'vuex/dist/logger'
 import * as localforage from "localforage"
 import VuexPersistence from "vuex-persist"
-import { cloneDeep } from "lodash"
+import { cloneDeep, debounce } from "lodash"
 
 const loggerPlugin = process.env.NODE_ENV !== "production"
   ? [createLogger()]
@@ -41,6 +41,44 @@ const blacklistReducer = state => {
   return filtered
 }
 
+const blacklistReducer2 = state => {
+  console.log('[VueX/Persist] Blacklist Reducer v2 running.')
+
+  const filtered = {}
+
+  for (const key in state) {
+    if (key === "route")
+      continue
+
+    if (state.hasOwnProperty(key)) {
+
+      if (!state[key]["blacklist"]) {
+        filtered[key] = state[key]
+        continue
+      }
+
+      const blacklist = state[key]["blacklist"]
+      if (blacklist[0] === "*")
+        continue
+
+      filtered[key] = {}
+      for (const subKey in state[key]) {
+        if (subKey === "blacklist")
+          continue
+
+        if (blacklist.includes(subKey))
+          continue
+
+        filtered[key][subKey] = state[key][subKey]
+      }
+
+    }
+
+  }
+
+  return filtered
+}
+
 const customSaveState = (key, state, storage) => {
   const modules = []
 
@@ -75,15 +113,28 @@ const customRestoreState = async (key, storage) => {
   return state
 }
 
+function subscribeHandler(mutation, state) {
+  // this = VuexPersistence instance
+  this._mutex.enqueue(this.saveState(this.key, this.reducer(state), this.storage))
+}
+
+const subscriber = store => {
+  return handler => {
+    store.subscribe(debounce(subscribeHandler.bind(persistence), 1000))
+  }
+}
+
 const persistence = new VuexPersistence({
   key: "persist",
   storage: localforage,
   asyncStorage: true,
   strictMode: true,
-  reducer: blacklistReducer,
+  reducer: blacklistReducer2,
   restoreState: customRestoreState,
   saveState: customSaveState,
 })
+
+persistence.subscriber = subscriber
 
 export const plugins = [...loggerPlugin, persistence.plugin]
 
