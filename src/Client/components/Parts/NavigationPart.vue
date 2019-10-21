@@ -100,8 +100,7 @@
     }
 
     onDebug() {
-      // this.$store.dispatch("booru/refreshPosts")
-      this.OpenDialog({ dialog: "auth", open: true })
+      this.$store.dispatch("booru/refreshPosts")
     }
 
     ensureDrawerIsntMini() {
@@ -175,6 +174,10 @@
       }
     }
 
+    onSettingsClicked() {
+      this.OpenDialog({ dialog: "settings", open: true })
+    }
+
     created() {
       this.GetSavedSearches();
     }
@@ -207,7 +210,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item>
+        <v-list-item onClick={this.onSettingsClicked}>
           <v-list-item-action>
             <v-icon>mdi-settings</v-icon>
           </v-list-item-action>

@@ -36,7 +36,7 @@ export const state = () => ({
   },
   drawerOpen: true,
   drawerMini: true,
-  dialogs: { auth: false },
+  dialogs: { auth: false, settings: false },
   tagSearchText: "",
   tagSearchSelected: [],
   blacklist: ["dialogs", "tagSearchText", "dialogs"],
@@ -81,9 +81,6 @@ export const mutations = {
   },
   [ui.mutations.DialogOpen](state, { dialog, open }) {
     state.dialogs[dialog] = open
-  },
-  forceOpenAuthDialog(state) {
-    state.dialogs.auth = true
   },
 }
 

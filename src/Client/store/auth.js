@@ -1,5 +1,5 @@
+import { Sites } from "~/assets/site-configs"
 import { api as apis } from "~/store/api"
-import { ui as uis } from "~/store/ui"
 
 export const auth = {
   getters: {},
@@ -8,16 +8,21 @@ export const auth = {
   Auth: "authenticated",
   RemoveAuth: "removeAuthenticated",
   EnsureAuth: "ensureAuthenticated",
+  WhichBooru: "whichBooru",
 }
 
-export const state = () => ({})
+export const state = () => ({
+  whichBooru: Sites[0],
+  blacklist: ["*"],
+})
 
 export const getters = {
   [auth.Auth]: s => {
     return p => {
       return (s[p] && s[p].loggedIn === true)
     }
-  }
+  },
+  [auth.WhichBooru]: s => s.whichBooru,
 }
 
 export const mutations = {
@@ -28,7 +33,10 @@ export const mutations = {
   },
   [auth.RemoveAuth](state, { currentSite }) {
     state[currentSite] = null
-  }
+  },
+  [auth.WhichBooru](state, booru) {
+    state.whichBooru = booru
+  },
 }
 
 export const actions = {
@@ -37,10 +45,10 @@ export const actions = {
 
     dispatch('api/' + apis.actions.Initialize, null, { root: true })
     const api = rootGetters['api/' + apis.getters.Instance]
-    const currentSite = site || rootGetters['api/' + apis.getters.CurrentEndpoint]
+    const currentSite = site || state.whichBooru || rootGetters['api/' + apis.getters.CurrentEndpoint]
 
     const res = await api.authenticate(id, key)
-    console.log(res)
+
     if (res.isSuccess) {
       const expires = new Date(res.data * 1000)
       commit(auth.Auth, { id, key, expires, currentSite })
@@ -62,8 +70,8 @@ export const actions = {
     if (expires > currentTime)
       return
 
-    return dispatch(auth.Auth, { ...state[currentSite] })
-  }
+    return dispatch(auth.Auth, { ...state[currentSite], site: currentSite })
+  },
 }
 
 

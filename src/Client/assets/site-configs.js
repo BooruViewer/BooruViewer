@@ -42,3 +42,6 @@ export default {
   SiteFeatures,
   AuthDialogConfigs,
 }
+
+// In addition to the modifications here, you need to add a .vue file for the per-site settings in src/Client/components/Parts/Settings/
+// Then export the component in src/Client/components/Parts/Settings/index.js

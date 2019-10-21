@@ -23,6 +23,9 @@
     @Api.Getter(api.getters.CurrentEndpoint)
     CurrentSite
 
+    @Auth.Getter(auth.WhichBooru)
+    AuthBooru
+
     @Booru.Action(booru.actions.RefreshPosts)
     RefreshPosts
 
@@ -50,12 +53,13 @@
 
     async onLogin(e) {
       try {
-        await this.AuthenticateUser({ id: this.formId, key: this.formKey, site: this.CurrentSite })
+        await this.AuthenticateUser({ id: this.formId, key: this.formKey, site: this.AuthBooru })
       } catch (crap) {
         console.error(crap)
         return
       }
-      this.RefreshPosts()
+      if (this.AuthBooru === this.CurrentSite)
+        this.RefreshPosts()
       this.closeDialog()
     }
 
