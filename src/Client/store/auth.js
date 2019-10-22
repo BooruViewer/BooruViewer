@@ -24,7 +24,7 @@ Sites.map(site => {
 export const state = () => ({
   whichBooru: Sites[0],
   ...initialStates,
-  blacklist: ["*"],
+  blacklist: [],
 })
 
 export const getters = {
