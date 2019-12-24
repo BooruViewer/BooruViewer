@@ -13,7 +13,17 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",
-    "nuxt": "^2.0.0"
+    "@nuxtjs/moment": "^1.4.0",
+    "file-saver": "^2.0.2",
+    "localforage": "^1.7.3",
+    "lodash": "^4.17.15",
+    "nuxt": "^2.0.0",
+    "nuxt-property-decorator": "^2.5.0",
+    "nuxt-vuex-router-sync": "^0.0.3",
+    "overlayscrollbars": "^1.10.0",
+    "overlayscrollbars-vue": "^0.2.0",
+    "qs": "^6.9.1",
+    "vuex-persist": "^2.2.0"
   },
   "devDependencies": {
     "@nuxtjs/vuetify": "^1.0.0"
