@@ -1,6 +1,6 @@
-# booruviewer
+# booruviewer-client
 
-> A Booru Viewing Client written in C# and Nuxt.js
+> The client for the BooruViewer project by Nikey646
 
 ## Build Setup
 
