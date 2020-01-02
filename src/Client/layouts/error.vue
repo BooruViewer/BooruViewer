@@ -33,6 +33,9 @@ export default {
       pageNotFound: '404 Not Found',
       otherError: 'An error occurred'
     }
+  },
+  created() {
+    console.log(this.error.message)
   }
 }
 </script>
