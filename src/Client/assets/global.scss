@@ -1,0 +1,45 @@
+
+$tagColors: (
+  artist: #f07a7b,
+  character: #46b265,
+  copyright:  #b38bec,
+  general: #51a3ec,
+  meta: #e8c259,
+);
+
+:root {
+  @each $name, $color in $tagColors {
+    $hoverColor: scale-color($color, $lightness: 30%);
+    $highlightColor: scale-color($color, $lightness: 15%);
+    --tag-color-#{$name}: #{$color};
+    --tag-color-#{$name}-hover: #{$hoverColor};
+    --tag-color-#{$name}-highlighted: #{$hoverColor};
+  }
+
+  --thumbnail-image-size: 150px;
+}
+
+@mixin tag-type($type) {
+  .tag-list .tag-type-#{$type} {
+    color: var(--tag-color-#{$type}) !important;
+
+    &:hover {
+      color: var(--tag-color-#{$type}-hover) !important;
+    }
+  }
+}
+
+@include tag-type(artist);
+@include tag-type(general);
+@include tag-type(meta);
+@include tag-type(copyright);
+@include tag-type(character);
+
+.tag-list .tag-is-dangerous {
+  background-color: #e53935 !important;
+  color: white !important;
+
+  &:hover {
+    color: white !important;
+  }
+}
