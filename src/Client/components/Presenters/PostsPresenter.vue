@@ -110,7 +110,7 @@
 
     _renderPost(post, index) {
       const elevations = {
-        'elevation-6': index == this.activeIdex,
+        'elevation-6': index == this.activeIdx,
         'elevation-0': index != this.activeIdx,
       }
 
@@ -134,7 +134,7 @@
             <img src={post.files && post.files.thumbnail}
                  alt={post.hash}
                  class={imageClasses}
-                 data-idex={index}
+                 data-idx={index}
                  {...{on}}
             />
           </div>
@@ -142,7 +142,7 @@
       }
 
       return <a href={`${this.SourceBooru.href}posts/${post.id}`}
-                data-idex={index}
+                data-idx={index}
                 onClick={this.__postClicked}
                 onDblClick={this.__postDoubleClicked}>
         <v-layout class={["align-center", "justify-center", "thumbnail", {...elevations}]}
