@@ -173,7 +173,7 @@
           </v-btn>
         </v-layout>
 
-        <v-overlay value={this.isLoading} absolute={true}>
+        <v-overlay value={this.isLoading} absolute>
           <v-progress-circular indeterminate color="primary"/>
         </v-overlay>
       </overlay-scrollbars>
