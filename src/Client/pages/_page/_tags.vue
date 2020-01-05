@@ -1,12 +1,12 @@
 <script>
   import {Component, namespace, Vue} from "nuxt-property-decorator"
-  import {SplitView} from "~/components"
+  import {SplitView, PostsPresenter} from "~/components"
 
   const routeNS = namespace("route")
 
   @Component({
     components: {
-      SplitView
+      SplitView, PostsPresenter
     }
   })
   export default class TagsPage extends Vue {
@@ -17,8 +17,18 @@
     @routeNS.State(s => s.params.page)
     Page
 
-
     post = null
+
+    // Nuxt.js magic method.
+    validate({params}) {
+      return /^\d+$/.test(params.page)
+    }
+
+    // This is the key for vue router
+    key() {
+      // Set it to static to re-use components
+      return "page-tags"
+    }
 
     _svResized(size) {
       // TODO: Store sizes in persistance
@@ -51,7 +61,7 @@
         <split-view onResized={this._svResized} min-width={minWidth} min-height={minHeight} default-width="50vw" default-height="50vh" horizontal={isHorizontal}>
           <template slot="left-content">
             <div class="pane" style={firstPaneStyle}>
-
+              <PostsPresenter />
             </div>
           </template>
           <template slot="right-content">
