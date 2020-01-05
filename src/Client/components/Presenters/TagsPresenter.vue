@@ -1,5 +1,5 @@
 <script>
-    import {Component, Prop, Vue} from "nuxt-property-decorator"
+    import {Component, Prop, mixins, Vue} from "nuxt-property-decorator"
     import { HumanizeMixin } from "~/mixins";
 
     const dangerousTags = [
@@ -7,7 +7,7 @@
     ]
 
     @Component({})
-    export default class TagsPresenter extends Vue {
+    export default class TagsPresenter extends mixins(HumanizeMixin) {
 
       @Prop(Array)
       tags
@@ -21,7 +21,7 @@
       __renderTag(tagCount) {
         return (tag, index) => {
 
-          const klass = []
+          const klass = {}
           klass[`tag-type-${tag.type.toLowerCase()}`] = true
           klass['tag-is-dangerous'] = this.isTagDangerous(tag.name)
 
