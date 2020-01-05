@@ -3,6 +3,9 @@ import * as localforage from "localforage"
 import VuexPersistence from "vuex-persist";
 import {debounce} from "lodash"
 
+export { api } from "./api"
+export { booru } from "./booru"
+
 const loggerPlugin = process.env.NODE_ENV !== "production"
   ? [createLogger()]
   : []
