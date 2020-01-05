@@ -61,7 +61,7 @@
 
       return this.FetchPosts()
         .then(() => {
-          this.$emit('post-selected', this.VisiblePosts[0])
+          this.$emit('postSelected', this.VisiblePosts[0])
           this.isLoading = false
         })
         .catch(console.error)
