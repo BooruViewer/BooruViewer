@@ -35,7 +35,7 @@ export default {
     }
   },
   created() {
-    console.log(this.error.message)
+    console.error(this.error.message)
   }
 }
 </script>
