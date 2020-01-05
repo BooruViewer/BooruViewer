@@ -78,6 +78,10 @@ export class BooruApi {
       .then(res => res.json())
   }
 
+  get imageBasePath() {
+    return `${this.__routePrefix}/image/`
+  }
+
   get __routePrefix() {
     return `/api/${this.endpoint}`
   }

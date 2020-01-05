@@ -1,21 +1,13 @@
 <script>
   import {Component, namespace, Vue} from "nuxt-property-decorator"
-  import {SplitView, PostsPresenter} from "~/components"
-
-  const routeNS = namespace("route")
+  import {SplitView, PostsPresenter, PreviewPresenter} from "~/components"
 
   @Component({
     components: {
-      SplitView, PostsPresenter
+      SplitView, PostsPresenter, PreviewPresenter
     }
   })
   export default class TagsPage extends Vue {
-
-    @routeNS.State(s => s.params.tags)
-    Tags
-
-    @routeNS.State(s => s.params.page)
-    Page
 
     post = null
 
@@ -61,12 +53,12 @@
         <split-view onResized={this._svResized} min-width={minWidth} min-height={minHeight} default-width="50vw" default-height="50vh" horizontal={isHorizontal}>
           <template slot="left-content">
             <div class="pane" style={firstPaneStyle}>
-              <PostsPresenter />
+              <PostsPresenter onPostSelected={this._postSelected} />
             </div>
           </template>
           <template slot="right-content">
             <div class="pane" style={lastPaneStyle}>
-
+              <PreviewPresenter post={this.post} />
             </div>
           </template>
         </split-view>
