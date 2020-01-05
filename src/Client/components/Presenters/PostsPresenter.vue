@@ -47,12 +47,12 @@
 
     @Watch("_page")
     _pageChanged() {
-      this.getPosts()
+      this._getPosts()
     }
 
     @Watch("tags")
     _tagsChanged() {
-      this.getPosts()
+      this._getPosts()
     }
 
     _getPosts() {
