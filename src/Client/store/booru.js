@@ -1,7 +1,5 @@
 import { api } from "~/store"
 
-console.log(api)
-
 const options = {
   hidePostsWhileLoading: true,
 }
