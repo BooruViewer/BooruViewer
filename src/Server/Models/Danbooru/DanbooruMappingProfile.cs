@@ -119,7 +119,7 @@ namespace BooruViewer.Models.Danbooru
 
                 var previewUrl = source.LargeFileUrl;
                 var originalUrl = CreateProxyUrl(source.FileUrl);
-                if (!source.HasLarge)
+                if (!source.HasLarge.HasValue)
                     previewUrl = originalUrl;
                 else previewUrl = CreateProxyUrl(previewUrl);
 
