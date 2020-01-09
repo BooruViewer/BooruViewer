@@ -6,10 +6,10 @@
   export default class SplitView extends Vue {
 
     @Prop(Number)
-    minWidth
+    minSize
 
     @Prop(Number)
-    maxWidth
+    MaxSize
 
     @Prop(String)
     defaultWidth
@@ -26,8 +26,8 @@
       const containerWidth = this.$el.clientWidth;
       const paneWidth = initialSize + offset;
 
-      const newWidth = max(this.minWidth, min(this.maxWidth, paneWidth / containerWidth * 100))
-      const restWidth = max(this.minWidth, min(this.maxWidth, 100 - (paneWidth / containerWidth * 100)))
+      const newWidth = max(this.minSize, min(this.MaxSize, paneWidth / containerWidth * 100))
+      const restWidth = max(this.minSize, min(this.MaxSize, 100 - (paneWidth / containerWidth * 100)))
 
       inputPane.style.width = newWidth + '%'
       return restWidth + '%'
@@ -38,8 +38,8 @@
       const containerHeight = this.$el.clientHeight
       const paneHeight = initialSize + offset
 
-      const newHeight = max(this.minWidth, min(this.maxWidth, paneHeight / containerHeight * 100))
-      const restHeight = max(this.minWidth, min(this.maxWidth, 100 - (paneHeight / containerHeight * 100)))
+      const newHeight = max(this.minSize, min(this.MaxSize, paneHeight / containerHeight * 100))
+      const restHeight = max(this.minSize, min(this.MaxSize, 100 - (paneHeight / containerHeight * 100)))
 
       inputPane.style.height = newHeight + '%'
       return restHeight + '%'
@@ -63,7 +63,7 @@
         val = leftPane.style.width = rightPane.style.width = this.defaultWidth;
       }
 
-      this.$emit('resized', { leftWidth: val, rightWidth: val })
+      this.$emit('resized', { firstPaneSize: val, lastPaneSize: val })
     }
 
     onMouseDown(e) {
@@ -102,7 +102,7 @@
         const firstSize = firstPane.style[prop]
         const lastSize = lastPane.style[prop]
 
-        this.$emit('resized', { leftWidth: firstSize, rightWidth: lastSize })
+        this.$emit('resized', { firstPaneSize: firstSize, lastPaneSize: lastSize })
         this.isResizing = false
 
         removeEventListener('mousemove', onMouseMoveT)

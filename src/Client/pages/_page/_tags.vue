@@ -1,6 +1,9 @@
 <script>
   import {Component, namespace, Vue} from "nuxt-property-decorator"
   import {SplitView, PostsPresenter, PreviewPresenter} from "~/components"
+  import { ui } from "~/store"
+
+  const UiNS = namespace("ui")
 
   @Component({
     components: {
@@ -8,6 +11,21 @@
     }
   })
   export default class TagsPage extends Vue {
+
+    @UiNS.Getter(ui.SplitViewOrientation)
+    SplitViewOrientation
+    @UiNS.Getter(ui.SplitViewOrientations)
+    SplitViewOrientations
+
+    @UiNS.Getter(ui.FirstPaneSize)
+    FirstPaneSize
+    @UiNS.Getter(ui.LastPaneSize)
+    LastPaneSize
+
+    @UiNS.Mutation(ui.FirstPaneSize)
+    SetFirstPaneSize
+    @UiNS.Mutation(ui.LastPaneSize)
+    SetLastPaneSize
 
     post = null
 
@@ -22,8 +40,10 @@
       return "page-tags"
     }
 
-    _svResized(size) {
-      // TODO: Store sizes in persistance
+    _svResized({ firstPaneSize, lastPaneSize }) {
+      console.log(firstPaneSize, lastPaneSize)
+      this.SetFirstPaneSize(firstPaneSize)
+      this.SetLastPaneSize(lastPaneSize)
     }
 
     _postSelected(post) {
@@ -31,26 +51,26 @@
     }
 
     render() {
-      const isHorizontal = false
+      const isHorizontal = this.SplitViewOrientation === this.SplitViewOrientations.Horizontal
 
-      const minHeight = isHorizontal ? 33 : 20
-      const minWidth = isHorizontal ? 66 : 80
+      const minSize = isHorizontal ? 33 : 20
+      const maxSize = isHorizontal ? 66 : 80
 
       const firstPaneStyle = {
-        width: !isHorizontal ? "50vw" : null, // TODO: Replace with width/height from presisted state
-        height: isHorizontal ? "50vh" : null, // TODO: Replace with width/height from presisted state
+        width: !isHorizontal ? this.FirstPaneSize : null,
+        height: isHorizontal ? this.FirstPaneSize : null,
         'min-width': !isHorizontal ? "20vw" : null,
         'min-height':  isHorizontal ? "20vh" : null,
       }
       const lastPaneStyle = {
-        width: !isHorizontal ? "50vw" : null, // TODO: Replace with width/height from presisted state
-        height: isHorizontal ? "50vh" : null, // TODO: Replace with width/height from presisted state
+        width: !isHorizontal ? this.LastPaneSize : null,
+        height: isHorizontal ? this.LastPaneSize : null,
         'min-width': !isHorizontal ? "20vw" : null,
         'min-height':  isHorizontal ? "20vh" : null,
       }
 
       return <div style="height: 100%">
-        <split-view onResized={this._svResized} min-width={minWidth} min-height={minHeight} default-width="50vw" default-height="50vh" horizontal={isHorizontal}>
+        <split-view onResized={this._svResized} min-size={minSize} max-size={maxSize} default-width="50vw" default-height="50vh" horizontal={isHorizontal}>
           <template slot="left-content">
             <div class="pane" style={firstPaneStyle}>
               <PostsPresenter onPostSelected={this._postSelected} />
