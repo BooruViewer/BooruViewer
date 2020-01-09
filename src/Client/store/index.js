@@ -5,6 +5,7 @@ import {debounce} from "lodash"
 
 export { api } from "./api"
 export { booru } from "./booru"
+export { ui } from "./ui"
 
 const loggerPlugin = process.env.NODE_ENV !== "production"
   ? [createLogger()]
