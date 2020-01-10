@@ -1,13 +1,13 @@
 
 const SplitViewOrientations = {
-  Vertical: Symbol("vertical"),
-  Horizontal: Symbol("horizontal"),
+  Vertical: "vertical",
+  Horizontal: "horizontal",
 }
 
 const TagBlacklistModes = {
-  Blur: Symbol("blur"),
-  Hide: Symbol("hide"),
-  None: Symbol("none"),
+  Blur: "blur",
+  Hide: "hide",
+  None: "none",
 }
 
 export const ui = {
