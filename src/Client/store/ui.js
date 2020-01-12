@@ -28,7 +28,7 @@ export const state = () => ({
   firstPaneSize: "50vw",
   lastPaneSize: "50vw",
   splitViewOrientation: SplitViewOrientations.Vertical,
-  drawerOpen: false,
+  drawerOpen: true,
   drawerMini: false,
   dialogs: { auth: false, settings: false },
   blacklistMode: TagBlacklistModes.Blur,

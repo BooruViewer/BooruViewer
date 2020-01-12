@@ -5,3 +5,6 @@ export { default as TagsPresenter } from "./Presenters/TagsPresenter"
 export { default as PreviewPresenter } from "./Presenters/PreviewPresenter"
 
 export { default as ImagePresenter } from "./Presenters/MediaPresenter/ImagePresenter"
+
+export { default as NavigationPart } from "./Parts/NavigationPart"
+export { default as BooruSwitcherPart } from "./Parts/BooruSwitcherPart"
