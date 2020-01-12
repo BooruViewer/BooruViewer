@@ -1,21 +1,16 @@
 <script>
-  import {Component, Watch, namespace, Vue} from "nuxt-property-decorator"
+  import {Component, Watch, namespace, mixins} from "nuxt-property-decorator"
   import {booru} from "~/store"
   import {TagsPresenter} from "~/components";
+  import { RouteParamsMixin } from "~/mixins"
   import { debounce } from "lodash"
 
-  const RouteNS = namespace("route")
   const BooruNS = namespace("booru")
 
   @Component({
     components: {TagsPresenter}
   })
-  export default class PostsPresenter extends Vue {
-
-    @RouteNS.State(s => s.params.tags)
-    Tags
-    @RouteNS.State(s => s.params.page)
-    _page
+  export default class PostsPresenter extends mixins(RouteParamsMixin) {
 
     @BooruNS.Getter(booru.Posts)
     Posts
@@ -35,10 +30,6 @@
       if (!this.Posts)
         return []
       return this.Posts.filter(p => p.isVisible)
-    }
-
-    get Page() {
-      return parseInt(this._page, 10)
     }
 
     created() {
