@@ -55,15 +55,15 @@
       this._getPosts()
     }
 
-    _getPosts() {
-      this.isLoading = true
+    @Watch("Posts")
+    _postsChanged(posts) {
+      this.isLoading = posts.length === 0
       this.activeIdx = 0
+      this.$emit('postSelected', this.VisiblePosts[0])
+    }
 
+    _getPosts() {
       return this.FetchPosts()
-        .then(() => {
-          this.$emit('postSelected', this.VisiblePosts[0])
-          this.isLoading = false
-        })
         .catch(console.error)
     }
 
@@ -164,11 +164,11 @@
         </v-layout>
 
         <v-layout style="bottom: 0">
-          <v-btn icon onClick={this.__previousClicked} disabled={this.Page <= 1}>
+          <v-btn icon onClick={this.__previousClicked} disabled={!this.isLoading && this.Page <= 1}>
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
           <v-spacer/>
-          <v-btn icon onClick={this.__nextClicked} disabled={this.Posts.length !== this.Limit}>
+          <v-btn icon onClick={this.__nextClicked} disabled={!this.isLoading && this.Posts.length !== this.Limit}>
             <v-icon>mdi-arrow-right</v-icon>
           </v-btn>
         </v-layout>
